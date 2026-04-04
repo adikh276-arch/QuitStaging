@@ -1,5 +1,5 @@
 import { initializeMockData } from '@/data/initMockData';
-import Landing from './pages/Landing';
+import Landing from './Landing';
 
 initializeMockData();
 
