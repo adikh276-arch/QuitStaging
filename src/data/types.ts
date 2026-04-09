@@ -129,5 +129,5 @@ export interface TrackerEntry {
 export interface AssessmentResult {
   score: number;
   date: string;
-  answers: boolean[];
+  answers: (boolean | number)[];
 }

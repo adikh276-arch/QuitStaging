@@ -44,37 +44,50 @@ const dsmQuestions = [
   'Have you experienced withdrawal symptoms when stopping [S]?',
 ];
 
+const likertOptions = [
+  { label: 'Definitely Yes', value: 4 },
+  { label: 'Somewhat Yes', value: 3 },
+  { label: 'Not Sure', value: 2 },
+  { label: 'Probably Not', value: 1 },
+  { label: 'Not at All', value: 0 },
+];
+
 const Assessment = ({ substance }: { substance: SubstanceConfig }) => {
   const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<boolean[]>([]);
+  const [answers, setAnswers] = useState<number[]>([]);
+  const [selected, setSelected] = useState<number | null>(null);
   const [done, setDone] = useState(false);
   const prev = getAssessment(substance.slug);
 
-  const answer = (yes: boolean) => {
-    const newAnswers = [...answers, yes];
+  const confirmAnswer = () => {
+    if (selected === null) return;
+    const newAnswers = [...answers, selected];
     setAnswers(newAnswers);
+    setSelected(null);
     if (step < 10) setStep(step + 1);
     else {
-      const score = newAnswers.filter(Boolean).length;
+      const score = Math.round(newAnswers.reduce((a, b) => a + b, 0) / (11 * 4) * 11);
       saveAssessment(substance.slug, { score, date: new Date().toISOString(), answers: newAnswers });
       setDone(true);
     }
   };
 
   if (done) {
-    const score = answers.filter(Boolean).length;
-    const severity = score <= 1 ? 'No indication' : score <= 3 ? 'Mild' : score <= 5 ? 'Moderate' : 'Severe';
-    const color = score <= 1 ? 'text-primary' : score <= 3 ? 'text-accent' : score <= 5 ? 'text-accent' : 'text-destructive';
+    const rawTotal = answers.reduce((a, b) => a + b, 0);
+    const maxTotal = 11 * 4;
+    const normalizedScore = Math.round((rawTotal / maxTotal) * 11);
+    const severity = normalizedScore <= 1 ? 'No indication' : normalizedScore <= 3 ? 'Mild' : normalizedScore <= 5 ? 'Moderate' : 'Severe';
+    const color = normalizedScore <= 1 ? 'text-primary' : normalizedScore <= 3 ? 'text-accent' : normalizedScore <= 5 ? 'text-accent' : 'text-destructive';
     return (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center">
         <h2 className="font-display text-2xl text-foreground">Results</h2>
-        <p className={`mt-4 font-display text-4xl font-bold ${color}`}>{score}/11</p>
+        <p className={`mt-4 font-display text-4xl font-bold ${color}`}>{normalizedScore}/11</p>
         <p className={`mt-2 text-lg font-semibold ${color}`}>{severity} Substance Use Disorder</p>
         {prev && <p className="mt-3 text-xs text-muted-foreground">Previous: {prev.score}/11</p>}
         <div className="mt-4 h-3 rounded-full bg-muted">
-          <div className={`h-3 rounded-full ${score <= 1 ? 'bg-primary' : score <= 3 ? 'bg-accent' : score <= 5 ? 'bg-accent' : 'bg-destructive'}`} style={{ width: `${(score / 11) * 100}%` }} />
+          <div className={`h-3 rounded-full ${normalizedScore <= 1 ? 'bg-primary' : normalizedScore <= 3 ? 'bg-accent' : normalizedScore <= 5 ? 'bg-accent' : 'bg-destructive'}`} style={{ width: `${(normalizedScore / 11) * 100}%` }} />
         </div>
-        <button onClick={() => { setStep(0); setAnswers([]); setDone(false); }} className="mt-6 rounded-xl bg-muted px-6 py-2 text-sm font-medium">Retake</button>
+        <button onClick={() => { setStep(0); setAnswers([]); setSelected(null); setDone(false); }} className="mt-6 rounded-xl bg-muted px-6 py-2 text-sm font-medium">Retake</button>
       </motion.div>
     );
   }
@@ -83,18 +96,38 @@ const Assessment = ({ substance }: { substance: SubstanceConfig }) => {
     <div>
       <div className="mb-4 h-2 rounded-full bg-muted"><div className="h-2 rounded-full bg-primary transition-all" style={{ width: `${((step + 1) / 11) * 100}%` }} /></div>
       <p className="mb-2 text-xs text-muted-foreground">Question {step + 1} of 11</p>
-      <motion.p key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="mb-6 text-base font-medium text-foreground">
+      <motion.p key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="mb-5 text-base font-medium text-foreground">
         {dsmQuestions[step].replace('[S]', substance.name.toLowerCase())}
       </motion.p>
-      <div className="flex gap-3">
-        <button onClick={() => answer(true)} className="flex-1 rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground">Yes, in the past year</button>
-        <button onClick={() => answer(false)} className="flex-1 rounded-xl bg-muted py-3 text-sm font-semibold text-foreground">No</button>
+      <div className="flex flex-col gap-2">
+        {likertOptions.map((opt) => (
+          <motion.button
+            key={opt.value}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => setSelected(opt.value)}
+            className={`w-full rounded-xl border px-4 py-3 text-left text-sm font-medium transition-all ${
+              selected === opt.value
+                ? 'border-primary bg-primary/15 text-primary ring-1 ring-primary/30'
+                : 'border-border bg-muted/50 text-foreground hover:bg-muted'
+            }`}
+          >
+            {opt.label}
+          </motion.button>
+        ))}
       </div>
-      {step > 0 && <button onClick={() => { setStep(step - 1); setAnswers(answers.slice(0, -1)); }} className="mt-3 text-xs text-muted-foreground">← Back</button>}
+      <div className="mt-4 flex items-center justify-between">
+        {step > 0 ? <button onClick={() => { setStep(step - 1); setAnswers(answers.slice(0, -1)); setSelected(answers[answers.length - 1] ?? null); }} className="text-xs text-muted-foreground">← Back</button> : <span />}
+        <button
+          onClick={confirmAnswer}
+          disabled={selected === null}
+          className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity disabled:opacity-40"
+        >
+          {step < 10 ? 'Next' : 'See Results'}
+        </button>
+      </div>
     </div>
   );
 };
-
 // ===== CALCULATOR =====
 const CalculatorView = ({ substance }: { substance: SubstanceConfig }) => {
   const calc = substance.calculator;
