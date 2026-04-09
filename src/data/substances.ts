@@ -158,35 +158,34 @@ export const substances: SubstanceConfig[] = [
     },
     activities: [
       {
-        id: 'box-breathing', name: 'Box Breathing', duration: '4 min', type: 'breathing',
-        description: 'An animated breathing exercise: Inhale 4 → Hold 4 → Exhale 4 → Hold 4. Repeat 5 cycles.',
-        phases: [
-          { time: 0, text: 'Inhale slowly for 4 counts...' },
-          { time: 4, text: 'Hold your breath for 4 counts...' },
-          { time: 8, text: 'Exhale slowly for 4 counts...' },
-          { time: 12, text: 'Hold for 4 counts...' },
-        ],
-      },
-      {
-        id: 'halt-check', name: 'HALT Check', duration: '2 min', type: 'checklist',
-        description: 'Check if you\'re Hungry, Angry, Lonely, or Tired.',
+        id: 'sober-bartender', name: 'Mocktail Mixer', duration: '5 min', type: 'checklist',
+        description: 'Create a delicious alcohol-free drink to retrain your reward system.',
         items: [
-          { title: 'H — Hungry?', content: 'Eat something first. Low blood sugar mimics craving signals and depletes willpower. Don\'t decide anything until you\'ve eaten.' },
-          { title: 'A — Angry?', content: 'Name the frustration out loud or in writing. Alcohol was your pressure valve. This craving is a symptom of the feeling, not the cause.' },
-          { title: 'L — Lonely?', content: 'Text one person about anything. Social isolation is the strongest single predictor of relapse. Connection is the medicine.' },
-          { title: 'T — Tired?', content: 'Your prefrontal cortex runs on sleep. Late night plus fatigue is peak relapse risk. Rest before making any decisions.' },
+          { title: 'Choose your base', content: 'Sparkling water, tonic, or kombucha. The fizz and ritual satisfy more than you expect.' },
+          { title: 'Add citrus or fruit', content: 'Squeeze lime, muddle berries, or add a splash of cranberry. Visual appeal matters.' },
+          { title: 'Garnish like you mean it', content: 'Rosemary sprig, cucumber slice, or a fancy glass. Your brain responds to ceremony.' },
+          { title: 'Sip slowly and rate it', content: 'Give your creation a name and a score out of 10. You just replaced a habit with a ritual.' },
         ],
       },
       {
-        id: 'urge-surfing', name: 'Urge Surfing Timer', duration: '5 min', type: 'timer',
-        description: 'Ride the wave of a craving with guided prompts.',
+        id: 'liver-love', name: 'Liver Recovery Meditation', duration: '4 min', type: 'timer',
+        description: 'A guided body-focused meditation on your liver healing in real time.',
         phases: [
-          { time: 0, text: 'Find the urge in your body. Chest? Gut? Throat? Just locate it without judging it.' },
-          { time: 60, text: "Don't fight it. Watch it like weather. You are the observer — not the craving." },
-          { time: 120, text: 'Is it getting stronger? Let it. You can handle the peak. Every craving has a ceiling.' },
-          { time: 180, text: 'The wave is at its highest. Stay with it. Just breathe.' },
-          { time: 240, text: "Notice — is it starting to flatten? Cravings always do this." },
-          { time: 280, text: "It's receding. You didn't act. This is what it always feels like — and it always passes." },
+          { time: 0, text: 'Place your right hand over your lower right ribs. Your liver is right there — the size of a football.' },
+          { time: 45, text: 'Every second you\'re sober, your liver cells are regenerating. Fatty deposits are mobilizing. This is happening right now.' },
+          { time: 90, text: 'Breathe slowly. Imagine healthy blood flowing through clean liver tissue. Your ALT and AST levels are dropping.' },
+          { time: 150, text: 'Your liver forgives faster than any organ. Within 2 weeks of stopping, fatty liver begins reversing.' },
+          { time: 210, text: 'You are giving your body the one thing it\'s been asking for: time without alcohol. Keep going.' },
+        ],
+      },
+      {
+        id: 'social-script', name: 'Social Situation Rehearsal', duration: '3 min', type: 'checklist',
+        description: 'Practice what to say when someone offers you a drink.',
+        items: [
+          { title: '"I\'m driving tonight"', content: 'Simple, universally accepted, ends the conversation. No one argues with the designated driver.' },
+          { title: '"I\'m on a health kick"', content: 'Positive framing. People respect self-improvement more than they question it.' },
+          { title: '"Not tonight, thanks"', content: 'No explanation needed. Confidence in delivery matters more than the words.' },
+          { title: 'Practice your exit strategy', content: 'Know where you parked, have your phone charged, and give yourself permission to leave early. Freedom is the plan.' },
         ],
       },
     ],
@@ -300,9 +299,39 @@ export const substances: SubstanceConfig[] = [
       },
     },
     activities: [
-      { id: 'craving-countdown', name: '5-Min Craving Countdown', duration: '5 min', type: 'timer', phases: [{ time: 0, text: 'The craving is starting. It feels urgent. It isn\'t. Start the clock.' }, { time: 60, text: '1 minute in. Normal. Keep going.' }, { time: 150, text: 'Halfway. Is the edge slightly coming off?' }, { time: 240, text: '4 minutes. Most cravings peak and begin falling now.' }, { time: 280, text: 'You made it. The craving has passed. Every. Single. Time.' }] },
-      { id: 'lung-breathing', name: 'Lung Recovery Breathing', duration: '4 min', type: 'breathing', phases: [{ time: 0, text: 'Inhale slowly for 5 counts...' }, { time: 5, text: 'Hold for 2 counts...' }, { time: 7, text: 'Exhale fully for 7 counts...' }, { time: 14, text: 'Rest for 2 counts...' }] },
-      { id: 'cost-snap', name: 'Cost Reality Snap', duration: '2 min', type: 'calculator' },
+      {
+        id: 'craving-countdown', name: '5-Min Craving Countdown', duration: '5 min', type: 'timer',
+        description: 'Nicotine cravings last 3-5 minutes. Outlast this one.',
+        phases: [
+          { time: 0, text: 'The craving hit. It feels like it\'ll last forever. It won\'t. Start the clock.' },
+          { time: 60, text: '1 minute down. Your brain is screaming for nicotine. That scream has a timer.' },
+          { time: 150, text: 'Halfway. Chew ice, squeeze your fists, splash cold water on your face. Anything physical.' },
+          { time: 240, text: '4 minutes. The nicotine receptor storm is already calming.' },
+          { time: 280, text: 'Done. You just weakened a neural pathway. Every craving you beat makes the next one weaker.' },
+        ],
+      },
+      {
+        id: 'lung-test', name: 'Lung Capacity Challenge', duration: '3 min', type: 'breathing',
+        description: 'Test and train your recovering lungs with progressive breath holds.',
+        phases: [
+          { time: 0, text: 'Exhale completely. Now inhale as deeply as you possibly can. Fill every corner.' },
+          { time: 8, text: 'Hold it. Count silently. How far can you go? Your cilia are regrowing right now.' },
+          { time: 20, text: 'Exhale slowly through pursed lips — 10 full seconds. Control the release.' },
+          { time: 35, text: 'Again. Deep inhale. Your lung capacity is measurably increasing every smoke-free day.' },
+          { time: 50, text: 'Hold. Push past where you stopped last time. Your lungs are adapting.' },
+          { time: 65, text: 'Slow exhale. Carbon monoxide left your blood within 48 hours of quitting. Oxygen is winning.' },
+        ],
+      },
+      {
+        id: 'hand-replacement', name: 'Hand & Mouth Ritual Swap', duration: '2 min', type: 'checklist',
+        description: 'Replace the physical habit of smoking with healthier hand-to-mouth rituals.',
+        items: [
+          { title: 'Grab a cinnamon stick or toothpick', content: 'The oral fixation is real. Give your mouth something to do. Cinnamon sticks are surprisingly satisfying.' },
+          { title: 'Squeeze a stress ball 20 times', content: 'Your hands are used to holding a cigarette. Give them a new job. Squeeze hard on each craving.' },
+          { title: 'Drink ice water through a straw', content: 'The inhale-exhale pattern of sipping mimics smoking mechanics. Cold water also triggers a mild endorphin response.' },
+          { title: 'Do 10 deep breaths with hand on chest', content: 'Replace the "smoke break" with a "breath break." Same duration, zero carcinogens. Your body won\'t know the difference.' },
+        ],
+      },
     ],
     articles: [
       { id: 'a1', title: 'What actually happens to your lungs when you quit', tag: 'Health', content: 'Hours 20–48: Carbon monoxide leaves your bloodstream. Blood oxygen normalizes.\n\nDay 14–30: Lung function measurably increases. Cilia start regrowing.\n\n1–9 months: Cilia fully regenerate. Breathlessness decreases.\n\nYour lungs have been trying to heal. You were interrupting the process.' },
@@ -397,9 +426,36 @@ export const substances: SubstanceConfig[] = [
       ],
     },
     activities: [
-      { id: '54321-grounding', name: '5-4-3-2-1 Grounding', duration: '5 min', type: 'checklist', items: [{ title: '5 — See', content: 'Name 5 things you can see right now.' }, { title: '4 — Touch', content: 'Touch 4 things and notice each texture.' }, { title: '3 — Hear', content: 'Close your eyes. Name 3 sounds.' }, { title: '2 — Smell', content: 'Name 2 smells.' }, { title: '1 — Taste', content: 'Name 1 thing you can taste right now.' }] },
-      { id: 'pmr', name: 'Progressive Muscle Relaxation', duration: '5 min', type: 'timer', phases: [{ time: 0, text: 'Feet and calves — tense them hard for 10 seconds. Now release.' }, { time: 60, text: 'Thighs and glutes. Squeeze tight, hold, let go.' }, { time: 120, text: 'Core and back — deep breath, tense, exhale and release.' }, { time: 180, text: 'Hands, arms, shoulders — clench, raise shoulders, release.' }, { time: 240, text: 'Face — scrunch every muscle. Hold. Release.' }, { time: 280, text: 'Complete. You activated your parasympathetic nervous system.' }] },
-      { id: 'safety-check', name: 'Safety Symptom Check', duration: '2 min', type: 'checklist', items: [{ title: 'Severe chest pain or racing heart', content: 'This needs medical attention. Call your doctor or go to emergency now.' }, { title: 'Unable to keep fluids down 12+ hours', content: 'You need IV fluids. Go to hospital immediately.' }, { title: 'Hallucinations or severe confusion', content: 'Medical emergency. Call 112 immediately.' }, { title: 'Manageable aches, sweating, or anxiety', content: 'Expected withdrawal. Stay hydrated, take prescribed MAT doses.' }] },
+      {
+        id: 'naloxone-drill', name: 'Naloxone Ready Check', duration: '2 min', type: 'checklist',
+        description: 'Ensure your safety net is in place. This could save your life.',
+        items: [
+          { title: 'Locate your naloxone kit', content: 'Where is it right now? Can someone else find it if you can\'t administer it yourself?' },
+          { title: 'Check expiration date', content: 'Expired naloxone is better than none, but fresh is better. Replace if needed — it\'s free at most pharmacies.' },
+          { title: 'Tell someone where it is', content: 'Text one person right now: "My naloxone is in [location]." This takes 10 seconds and could save your life.' },
+          { title: 'Review the steps', content: 'Call 112. Lay person on side. Administer nasal spray or injection. Rescue breathing if needed. Stay until help arrives.' },
+        ],
+      },
+      {
+        id: 'pain-inventory', name: 'Pain Without Opioids', duration: '5 min', type: 'journal',
+        description: 'Map your pain and discover what actually needs opioids vs what doesn\'t.',
+        fields: [
+          { key: 'painLocation', label: 'Where is your pain right now?', type: 'textarea', placeholder: 'Lower back, joints, headache, emotional...' },
+          { key: 'painLevel', label: 'Pain level (1-10)', type: 'slider', min: 1, max: 10, step: 1 },
+          { key: 'nonOpioidTried', label: 'What non-opioid approach could you try?', type: 'textarea', placeholder: 'Heat pad, ibuprofen, stretching, walking, ice...' },
+          { key: 'reflection', label: 'Is this pain or craving wearing a pain mask?', type: 'textarea', placeholder: 'Be honest with yourself...' },
+        ],
+      },
+      {
+        id: 'safe-person-call', name: 'Safe Person Speed Dial', duration: '3 min', type: 'checklist',
+        description: 'When the craving peaks, connection is the strongest medicine.',
+        items: [
+          { title: 'Open your phone contacts', content: 'Who is your safe person? Sponsor, counselor, friend, family member. Pick one.' },
+          { title: 'Send a text right now', content: '"Hey, having a tough moment. Can you talk?" That\'s it. You don\'t need a speech. Just send it.' },
+          { title: 'If no one answers, call a hotline', content: 'SAMHSA: 1-800-662-4357. Available 24/7. Free. Confidential. They\'ve heard it all before.' },
+          { title: 'Stay on the line or in the chat', content: 'Cravings peak in 15–20 minutes. Stay connected through the peak. The other side is always calmer.' },
+        ],
+      },
     ],
     articles: [
       { id: 'a1', title: 'MAT is not substitution: what buprenorphine actually does', tag: 'Science', content: 'Buprenorphine is a partial opioid agonist. It stabilizes, doesn\'t get you high. People on MAT are 50% less likely to die from opioid overdose. MAT is recovery.' },
@@ -458,9 +514,36 @@ export const substances: SubstanceConfig[] = [
       },
     },
     activities: [
-      { id: 'vivid-dream-journal', name: 'Vivid Dream Journal', duration: '3 min', type: 'journal', fields: [{ key: 'dream', label: 'What did you dream about?', type: 'textarea', placeholder: 'Describe the dream...' }, { key: 'intensity', label: 'Intensity', type: 'slider', min: 1, max: 10, step: 1 }] },
-      { id: 'boredom-buster', name: 'Boredom Buster', duration: '2 min', type: 'checklist', items: [{ title: 'Move your body for 5 minutes', content: 'Boredom after quitting is dopamine withdrawal. Movement immediately generates what cannabis used to provide.' }, { title: 'Start something you\'ve been postponing', content: 'The motivation is not coming first. Begin the task — motivation follows action, not the other way around.' }, { title: 'Call or text someone', content: 'Social contact activates reward pathways that cannabis was monopolizing.' }, { title: 'Go outside and walk without your phone', content: 'Environmental change disrupts the craving loop. Walking generates endocannabinoids naturally.' }] },
-      { id: 'body-scan', name: 'Body Scan', duration: '5 min', type: 'timer', phases: [{ time: 0, text: 'Start at your head. Notice any tension, warmth, or tingling.' }, { time: 60, text: 'Move to your neck and shoulders. Just observe.' }, { time: 120, text: 'Chest and belly. Feel your breath.' }, { time: 180, text: 'Hands and arms. What sensations are present?' }, { time: 240, text: 'Legs and feet. Stay present.' }, { time: 280, text: 'You are here. Your body is working. That is enough.' }] },
+      {
+        id: 'vivid-dream-journal', name: 'REM Rebound Dream Log', duration: '3 min', type: 'journal',
+        description: 'Cannabis suppressed your dreams. Now they\'re back — intense and wild. Capture them.',
+        fields: [
+          { key: 'dream', label: 'What did you dream about?', type: 'textarea', placeholder: 'Describe every detail you remember — colors, people, emotions...' },
+          { key: 'intensity', label: 'Dream intensity', type: 'slider', min: 1, max: 10, step: 1 },
+          { key: 'emotion', label: 'Dominant emotion in the dream', type: 'chips', options: ['Fear', 'Joy', 'Confusion', 'Anger', 'Peace', 'Nostalgia'] },
+        ],
+      },
+      {
+        id: 'endocannabinoid-boost', name: 'Natural Endocannabinoid Boost', duration: '4 min', type: 'timer',
+        description: 'Your body makes its own cannabinoids. This routine activates them without weed.',
+        phases: [
+          { time: 0, text: 'Start jogging in place or doing jumping jacks. Moderate intensity. Your endocannabinoid system activates with aerobic movement.' },
+          { time: 60, text: 'Keep going. At 10+ minutes of moderate exercise, anandamide (your natural THC) begins releasing.' },
+          { time: 120, text: 'Feel that warmth spreading? That\'s your runner\'s high — the same receptors cannabis hijacked, now working naturally.' },
+          { time: 180, text: 'Slow down gradually. Deep breaths. Your body just produced what it needed without any substance.' },
+          { time: 220, text: 'This feeling is real. It\'s yours. And it gets easier to access every day you stay clean.' },
+        ],
+      },
+      {
+        id: 'munchie-makeover', name: 'Appetite Recovery Kitchen', duration: '3 min', type: 'checklist',
+        description: 'Relearn how to eat and enjoy food without cannabis.',
+        items: [
+          { title: 'Eat something small — even if you\'re not hungry', content: 'Appetite loss after quitting is temporary. Your ghrelin signaling is recalibrating. A banana, toast, or yogurt is enough.' },
+          { title: 'Smell your food before eating', content: 'Cannabis enhanced olfactory processing. Your natural smell-taste connection is rebuilding. Pay attention to it.' },
+          { title: 'Set a meal timer for every 4 hours', content: 'Structure replaces the "I\'ll eat when I\'m high" pattern. Your body needs fuel even when it doesn\'t signal hunger.' },
+          { title: 'Drink ginger tea for nausea', content: 'Post-cannabis nausea is common in the first week. Ginger directly addresses it without medication.' },
+        ],
+      },
     ],
     articles: [
       { id: 'a1', title: 'Cannabis withdrawal is real — here\'s the timeline', tag: 'Recovery', content: 'Days 1–3: Irritability, sleep disruption, appetite loss. Days 4–7: Peak anxiety, night sweats, vivid dreams. Week 2–3: Gradual normalization. Month 1+: Most symptoms resolved.' },
@@ -520,9 +603,36 @@ export const substances: SubstanceConfig[] = [
       },
     },
     activities: [
-      { id: 'body-scan', name: 'Body Scan Meditation', duration: '5 min', type: 'timer', phases: [{ time: 0, text: 'Begin at the top of your head. Notice any sensation.' }, { time: 60, text: 'Face, jaw, neck. Is there tension? Just observe.' }, { time: 120, text: 'Chest and shoulders. Let your breath be whatever it is.' }, { time: 180, text: 'Hands and arms. Can you feel your heartbeat?' }, { time: 240, text: 'Belly, lower back, legs, feet.' }, { time: 280, text: 'You exist. You\'re here. Your body is recovering.' }] },
-      { id: 'dopamine-rebuild', name: 'Dopamine Rebuild Menu', duration: '3 min', type: 'checklist', items: [{ title: 'Eat something', content: 'Blood sugar stabilization is critical during the crash.' }, { title: 'Walk outside in daylight', content: 'Natural light triggers dopamine and resets circadian rhythm.' }, { title: 'Watch something funny', content: 'Laughter triggers dopamine release — gently.' }, { title: 'Text someone', content: 'Social reconnection releases oxytocin and dopamine.' }] },
-      { id: 'heart-rate-log', name: 'Heart Rate Log', duration: '2 min', type: 'journal', fields: [{ key: 'bpm', label: 'Resting heart rate (BPM)', type: 'number', min: 40, max: 200 }, { key: 'chest', label: 'How does your chest feel today?', type: 'textarea', placeholder: 'Tight? Normal? Palpitations?' }] },
+      {
+        id: 'ice-dive', name: 'Ice Water Reset', duration: '2 min', type: 'timer',
+        description: 'A cold shock technique that triggers natural dopamine release — the neurotransmitter stimulants depleted.',
+        phases: [
+          { time: 0, text: 'Fill a bowl with ice water. Submerge your hands up to the wrists. Breathe.' },
+          { time: 20, text: 'The cold is uncomfortable. That discomfort is releasing norepinephrine — naturally stimulating your brain.' },
+          { time: 45, text: 'Hold for 10 more seconds. Your vagus nerve is activating. Heart rate is slowing.' },
+          { time: 60, text: 'Remove your hands. Notice the rush of warmth and alertness. That\'s a 200-300% dopamine increase — no substance required.' },
+          { time: 90, text: 'Dry your hands. You just proved your brain can generate intensity without drugs.' },
+        ],
+      },
+      {
+        id: 'crash-survival', name: 'Crash Phase Survival Kit', duration: '3 min', type: 'checklist',
+        description: 'The stimulant crash is brutal but temporary. This gets you through it.',
+        items: [
+          { title: 'Eat something high-protein now', content: 'Tyrosine in eggs, chicken, and nuts is the direct precursor to dopamine. Your brain is running on empty — feed it building blocks.' },
+          { title: 'Set a 90-minute sleep timer', content: 'Hypersomnia in the crash phase is your brain repairing. Sleep is medicine right now, not laziness.' },
+          { title: 'Put your phone across the room', content: 'The urge to scroll or contact dealers peaks during the crash. Physical distance creates decision friction.' },
+          { title: 'Drink a full glass of water with electrolytes', content: 'Stimulants cause severe dehydration. Your headache and fatigue are partly fluid loss. Replenish now.' },
+        ],
+      },
+      {
+        id: 'pleasure-relearn', name: 'Pleasure Relearning Log', duration: '3 min', type: 'journal',
+        description: 'Anhedonia makes everything feel grey. Track the moments when color returns.',
+        fields: [
+          { key: 'pleasureMoment', label: 'Did anything feel even slightly good today?', type: 'textarea', placeholder: 'A warm shower, a funny text, sunshine on your face...' },
+          { key: 'intensity', label: 'How much pleasure? (even 1 counts)', type: 'slider', min: 0, max: 10, step: 1 },
+          { key: 'compare', label: 'Compared to last week, is pleasure...', type: 'chips', options: ['Same', 'Slightly more', 'Noticeably more', 'Way more'] },
+        ],
+      },
     ],
     articles: [
       { id: 'a1', title: 'The dopamine crash', tag: 'Science', content: 'Stimulants flood the brain with 3–5x normal dopamine. The crash is the brain recalibrating. Anhedonia peaks then resolves over 2–4 weeks.' },
@@ -582,9 +692,38 @@ export const substances: SubstanceConfig[] = [
       },
     },
     activities: [
-      { id: 'diaphragmatic', name: 'Diaphragmatic Breathing', duration: '4 min', type: 'breathing', description: 'Activates GABA — the same system benzos work on.', phases: [{ time: 0, text: 'Inhale into your belly for 4 counts...' }, { time: 4, text: 'Hold for 2 counts...' }, { time: 6, text: 'Exhale slowly for 8 counts...' }, { time: 14, text: 'Rest for 2 counts...' }] },
-      { id: 'distraction', name: 'Structured Distraction', duration: '3 min', type: 'checklist', items: [{ title: 'Count objects of one colour', content: 'Colour sorting engages visual cortex — neurologically incompatible with anxiety loop.' }, { title: 'Describe your environment in detail', content: 'Verbal description activates prefrontal cortex, overriding amygdala\'s panic signal.' }, { title: 'Name 5 capitals, 5 animals, 5 foods', content: 'Categorical retrieval occupies the exact region driving the anxiety spiral.' }, { title: 'Write 3 things that went well today', content: 'Interrupts catastrophic thinking by forcing retrieval of positive memory.' }] },
-      { id: 'pmr', name: 'Progressive Muscle Relaxation', duration: '5 min', type: 'timer', phases: [{ time: 0, text: 'Feet and calves — tense hard, then release.' }, { time: 60, text: 'Thighs and glutes. Squeeze, hold, let go.' }, { time: 120, text: 'Core and back — tense, exhale and release.' }, { time: 180, text: 'Hands, arms, shoulders — clench, release.' }, { time: 240, text: 'Face — scrunch everything. Hold. Release.' }, { time: 280, text: 'Complete. Parasympathetic nervous system activated.' }] },
+      {
+        id: 'gaba-breathing', name: 'GABA Activation Breathing', duration: '5 min', type: 'breathing',
+        description: 'This specific breathing ratio activates your GABA system — the same pathway benzos target.',
+        phases: [
+          { time: 0, text: 'Inhale through your nose for 4 counts. Fill your belly, not your chest.' },
+          { time: 4, text: 'Hold gently for 2 counts. No strain.' },
+          { time: 6, text: 'Exhale through pursed lips for 8 counts. The long exhale is the key — it stimulates your vagus nerve.' },
+          { time: 14, text: 'Pause for 2 counts. Let your body settle before the next breath.' },
+        ],
+      },
+      {
+        id: 'window-wave-log', name: 'Window & Wave Journal', duration: '3 min', type: 'journal',
+        description: 'Benzo withdrawal alternates between "windows" (feeling normal) and "waves" (symptoms return). Track the pattern.',
+        fields: [
+          { key: 'state', label: 'Are you in a window or a wave right now?', type: 'chips', options: ['Window', 'Wave', 'In between'] },
+          { key: 'duration', label: 'How long has this phase lasted?', type: 'chips', options: ['Hours', '1 day', '2-3 days', 'A week+'] },
+          { key: 'symptoms', label: 'What symptoms are present?', type: 'textarea', placeholder: 'Anxiety, depersonalization, muscle tension, tinnitus...' },
+          { key: 'insight', label: 'What helped during your last window?', type: 'textarea', placeholder: 'Walking, magnesium, distraction, sleep...' },
+        ],
+      },
+      {
+        id: 'sensory-anchor', name: 'Sensory Grounding Anchor', duration: '3 min', type: 'timer',
+        description: 'When depersonalization or panic hits during taper, this pulls you back to reality.',
+        phases: [
+          { time: 0, text: 'Hold something cold — an ice cube, a cold can, a frozen spoon. Focus entirely on the sensation.' },
+          { time: 30, text: 'The cold is real. You are real. Name 5 things you can see. Say them out loud.' },
+          { time: 60, text: 'Stamp your feet on the ground. Hard. Feel the floor. You are here.' },
+          { time: 90, text: 'Smell something strong — coffee beans, peppermint, citrus peel. Inhale deeply.' },
+          { time: 120, text: 'Splash cold water on your wrists. The depersonalization will pass. It always does.' },
+          { time: 160, text: 'You are safe. This is withdrawal, not danger. Your brain is recalibrating. This is temporary.' },
+        ],
+      },
     ],
     articles: [
       { id: 'a1', title: 'Why benzo withdrawal can be dangerous', tag: 'Safety', content: 'Benzos enhance GABA. Abrupt cessation can trigger seizures. Always taper under medical supervision.' },
@@ -642,9 +781,36 @@ export const substances: SubstanceConfig[] = [
       },
     },
     activities: [
-      { id: 'cold-exposure', name: 'Cold Exposure Therapy', duration: '3 min', type: 'timer', phases: [{ time: 0, text: 'Turn on cold water. Start with your hands and feet.' }, { time: 30, text: 'Let the cold reach your arms and legs.' }, { time: 60, text: 'If you can, let it hit your chest and back.' }, { time: 120, text: 'The gasp reflex is normal. Breathe through it.' }, { time: 150, text: 'You just activated your endorphin system naturally.' }] },
-      { id: 'trigger-audit', name: 'Trigger Environment Audit', duration: '3 min', type: 'checklist', items: [{ title: 'Leave kratom subreddits and forums', content: 'These communities normalize use and maintain craving triggers.' }, { title: 'Delete saved vendor websites', content: 'Remove the friction. Make ordering harder.' }, { title: 'Eat a banana and drink water', content: 'Potassium helps with muscle cramps. Hydration reduces symptoms.' }, { title: 'Move to a different room', content: 'Location-based triggers are strongest in kratom addiction.' }] },
-      { id: 'use-journal', name: 'Original Use Journal', duration: '5 min', type: 'journal', fields: [{ key: 'originalReason', label: 'What were you originally treating with kratom?', type: 'textarea', placeholder: 'Pain? Anxiety? Low energy?' }, { key: 'stillPresent', label: 'Is that issue still present?', type: 'textarea', placeholder: 'Better, worse, or the same?' }, { key: 'alternative', label: 'One non-kratom thing to address that need today?', type: 'textarea', placeholder: 'Exercise, therapy, doctor visit...' }] },
+      {
+        id: 'cold-shower', name: 'Cold Shower Endorphin Rush', duration: '3 min', type: 'timer',
+        description: 'Kratom hijacked your endorphin system. Cold water restarts it naturally.',
+        phases: [
+          { time: 0, text: 'Turn on cold water. Start with just your hands and feet. The initial shock is normal.' },
+          { time: 30, text: 'Let the cold reach your arms and legs. Breathe through the discomfort — in through nose, out through mouth.' },
+          { time: 60, text: 'If you can, let it hit your chest and back. Your body is releasing norepinephrine and endorphins right now.' },
+          { time: 120, text: 'The gasp reflex is your body activating its stress response — the same system kratom suppressed.' },
+          { time: 150, text: 'Step out. Notice the rush of warmth and alertness. That\'s your natural opioid system waking up.' },
+        ],
+      },
+      {
+        id: 'digital-detox', name: 'Digital Trigger Purge', duration: '3 min', type: 'checklist',
+        description: 'Kratom addiction lives online. Clean your digital environment.',
+        items: [
+          { title: 'Unsubscribe from kratom subreddits', content: 'r/kratom normalizes heavy use. r/quittingkratom is okay to keep — but only if it motivates, not triggers.' },
+          { title: 'Delete vendor bookmarks and apps', content: 'Remove every saved website, auto-fill address, and payment method. Make ordering require effort.' },
+          { title: 'Block vendor email addresses', content: 'Those "sale" emails are designed to trigger relapse. Block them or create a filter to auto-delete.' },
+          { title: 'Tell your browser to forget', content: 'Clear auto-complete for vendor names. Every friction point you add is a moment to choose differently.' },
+        ],
+      },
+      {
+        id: 'root-cause', name: 'Root Cause Explorer', duration: '5 min', type: 'journal',
+        description: 'Most people started kratom for a reason. Address that reason directly.',
+        fields: [
+          { key: 'originalReason', label: 'What were you originally treating with kratom?', type: 'textarea', placeholder: 'Chronic pain? Social anxiety? Low energy? Depression?' },
+          { key: 'currentState', label: 'Is that original issue better, worse, or the same without kratom?', type: 'textarea', placeholder: 'Be specific about what\'s changed...' },
+          { key: 'alternative', label: 'One thing you can do TODAY to address that root cause', type: 'textarea', placeholder: 'Schedule a doctor visit, try a stretch routine, call a therapist...' },
+        ],
+      },
     ],
     articles: [
       { id: 'a1', title: 'Kratom withdrawal: harder than expected', tag: 'Recovery', content: 'Mitragynine binds to opioid receptors. Withdrawal mirrors opioid symptoms. Physical symptoms resolve in 7–10 days.' },
@@ -702,9 +868,38 @@ export const substances: SubstanceConfig[] = [
       },
     },
     activities: [
-      { id: 'mood-checkin', name: 'Mood Tracking Check-in', duration: '2 min', type: 'journal', fields: [{ key: 'mood', label: 'Mood right now (1-10)', type: 'slider', min: 1, max: 10, step: 1 }, { key: 'emotionalTone', label: 'Today\'s emotional tone', type: 'chips', options: ['Flat', 'Sad', 'Anxious', 'Normal', 'Good', 'Great'] }, { key: 'genuineEmotion', label: 'One thing you felt genuine emotion about today', type: 'textarea', placeholder: 'A song, a conversation, something funny...' }] },
-      { id: 'serotonin-menu', name: 'Serotonin Restoration Menu', duration: '3 min', type: 'checklist', items: [{ title: 'Exercise for 30 minutes', content: 'Aerobic exercise increases serotonin synthesis. Most evidence-based intervention for MDMA recovery.' }, { title: 'Eat a protein-rich meal', content: 'Tryptophan in eggs, turkey, cheese, legumes is the precursor to serotonin.' }, { title: 'Get 15 minutes of sunlight', content: 'Sunlight directly stimulates serotonin production.' }, { title: 'Have a genuine conversation', content: 'Serotonin mediates social belonging. Don\'t isolate.' }] },
-      { id: 'music-listening', name: 'Music Without MDMA', duration: '5 min', type: 'timer', phases: [{ time: 0, text: 'Put on music that has genuinely moved you. Sit with it.' }, { time: 60, text: 'Notice whatever you feel — even if it\'s flat. Notice that too.' }, { time: 150, text: 'The goal isn\'t to feel what you felt on MDMA. Notice what\'s here now.' }, { time: 240, text: 'Music-induced emotion is mediated by serotonin and dopamine. Both recovering.' }, { time: 285, text: 'Stay with whatever is here. This is authentic. This is yours.' }] },
+      {
+        id: 'emotion-archaeology', name: 'Emotion Archaeology', duration: '3 min', type: 'journal',
+        description: 'MDMA made emotions feel superhuman. Rediscover what authentic emotion feels like.',
+        fields: [
+          { key: 'mood', label: 'Mood right now (1-10)', type: 'slider', min: 1, max: 10, step: 1 },
+          { key: 'emotionalTone', label: 'What\'s the dominant feeling?', type: 'chips', options: ['Flat', 'Sad', 'Anxious', 'Content', 'Warm', 'Excited'] },
+          { key: 'genuineEmotion', label: 'One thing you felt genuine emotion about today', type: 'textarea', placeholder: 'A kind word, a sunset, a pet, a memory...' },
+          { key: 'comparison', label: 'Is your emotional range expanding compared to last week?', type: 'chips', options: ['Yes', 'Same', 'No', 'Not sure'] },
+        ],
+      },
+      {
+        id: 'sober-rave', name: 'Sober Music Experience', duration: '5 min', type: 'timer',
+        description: 'MDMA hijacked your relationship with music. This rebuilds it — sober, real, and yours.',
+        phases: [
+          { time: 0, text: 'Put on a track that used to move you — before MDMA, or even during. Close your eyes.' },
+          { time: 45, text: 'Don\'t chase the high. Just listen. What do you actually hear? Layers, lyrics, rhythm.' },
+          { time: 90, text: 'If it feels flat, that\'s okay. Emotional blunting is serotonin recovering. Notice the flatness without judging it.' },
+          { time: 150, text: 'Try moving your body — even slightly. Tap your foot. Nod your head. Let your body respond before your mind.' },
+          { time: 210, text: 'If something stirs — even faintly — stay with it. That tiny spark is your serotonin system rebuilding. It gets louder.' },
+          { time: 270, text: 'This feeling is real. It\'s not as intense as MDMA. But it\'s yours. And it doesn\'t cost anything.' },
+        ],
+      },
+      {
+        id: 'social-rewire', name: 'Connection Without Chemicals', duration: '3 min', type: 'checklist',
+        description: 'MDMA created artificial intimacy. Learn to build real connection sober.',
+        items: [
+          { title: 'Text someone something vulnerable', content: 'Not a meme. Something real. "I\'ve been having a rough time." MDMA made vulnerability easy. Practice it sober.' },
+          { title: 'Make eye contact in your next conversation', content: 'MDMA amplified eye contact and connection. Your oxytocin system works without it — just more subtly.' },
+          { title: 'Hug someone for 20 seconds', content: 'Extended physical contact releases oxytocin. 20 seconds is the threshold. It feels long. Do it anyway.' },
+          { title: 'Write down one relationship that matters', content: 'MDMA made everyone feel like your soulmate. Who actually matters when you\'re sober? That\'s the real list.' },
+        ],
+      },
     ],
     articles: [
       { id: 'a1', title: 'What MDMA does to serotonin', tag: 'Science', content: 'MDMA causes 3–5x normal serotonin release. With heavy use, cumulative depletion damages serotonin neuron terminals. Recovery documented over 18 months of abstinence.' },
