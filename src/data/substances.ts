@@ -426,9 +426,36 @@ export const substances: SubstanceConfig[] = [
       ],
     },
     activities: [
-      { id: '54321-grounding', name: '5-4-3-2-1 Grounding', duration: '5 min', type: 'checklist', items: [{ title: '5 — See', content: 'Name 5 things you can see right now.' }, { title: '4 — Touch', content: 'Touch 4 things and notice each texture.' }, { title: '3 — Hear', content: 'Close your eyes. Name 3 sounds.' }, { title: '2 — Smell', content: 'Name 2 smells.' }, { title: '1 — Taste', content: 'Name 1 thing you can taste right now.' }] },
-      { id: 'pmr', name: 'Progressive Muscle Relaxation', duration: '5 min', type: 'timer', phases: [{ time: 0, text: 'Feet and calves — tense them hard for 10 seconds. Now release.' }, { time: 60, text: 'Thighs and glutes. Squeeze tight, hold, let go.' }, { time: 120, text: 'Core and back — deep breath, tense, exhale and release.' }, { time: 180, text: 'Hands, arms, shoulders — clench, raise shoulders, release.' }, { time: 240, text: 'Face — scrunch every muscle. Hold. Release.' }, { time: 280, text: 'Complete. You activated your parasympathetic nervous system.' }] },
-      { id: 'safety-check', name: 'Safety Symptom Check', duration: '2 min', type: 'checklist', items: [{ title: 'Severe chest pain or racing heart', content: 'This needs medical attention. Call your doctor or go to emergency now.' }, { title: 'Unable to keep fluids down 12+ hours', content: 'You need IV fluids. Go to hospital immediately.' }, { title: 'Hallucinations or severe confusion', content: 'Medical emergency. Call 112 immediately.' }, { title: 'Manageable aches, sweating, or anxiety', content: 'Expected withdrawal. Stay hydrated, take prescribed MAT doses.' }] },
+      {
+        id: 'naloxone-drill', name: 'Naloxone Ready Check', duration: '2 min', type: 'checklist',
+        description: 'Ensure your safety net is in place. This could save your life.',
+        items: [
+          { title: 'Locate your naloxone kit', content: 'Where is it right now? Can someone else find it if you can\'t administer it yourself?' },
+          { title: 'Check expiration date', content: 'Expired naloxone is better than none, but fresh is better. Replace if needed — it\'s free at most pharmacies.' },
+          { title: 'Tell someone where it is', content: 'Text one person right now: "My naloxone is in [location]." This takes 10 seconds and could save your life.' },
+          { title: 'Review the steps', content: 'Call 112. Lay person on side. Administer nasal spray or injection. Rescue breathing if needed. Stay until help arrives.' },
+        ],
+      },
+      {
+        id: 'pain-inventory', name: 'Pain Without Opioids', duration: '5 min', type: 'journal',
+        description: 'Map your pain and discover what actually needs opioids vs what doesn\'t.',
+        fields: [
+          { key: 'painLocation', label: 'Where is your pain right now?', type: 'textarea', placeholder: 'Lower back, joints, headache, emotional...' },
+          { key: 'painLevel', label: 'Pain level (1-10)', type: 'slider', min: 1, max: 10, step: 1 },
+          { key: 'nonOpioidTried', label: 'What non-opioid approach could you try?', type: 'textarea', placeholder: 'Heat pad, ibuprofen, stretching, walking, ice...' },
+          { key: 'reflection', label: 'Is this pain or craving wearing a pain mask?', type: 'textarea', placeholder: 'Be honest with yourself...' },
+        ],
+      },
+      {
+        id: 'safe-person-call', name: 'Safe Person Speed Dial', duration: '3 min', type: 'checklist',
+        description: 'When the craving peaks, connection is the strongest medicine.',
+        items: [
+          { title: 'Open your phone contacts', content: 'Who is your safe person? Sponsor, counselor, friend, family member. Pick one.' },
+          { title: 'Send a text right now', content: '"Hey, having a tough moment. Can you talk?" That\'s it. You don\'t need a speech. Just send it.' },
+          { title: 'If no one answers, call a hotline', content: 'SAMHSA: 1-800-662-4357. Available 24/7. Free. Confidential. They\'ve heard it all before.' },
+          { title: 'Stay on the line or in the chat', content: 'Cravings peak in 15–20 minutes. Stay connected through the peak. The other side is always calmer.' },
+        ],
+      },
     ],
     articles: [
       { id: 'a1', title: 'MAT is not substitution: what buprenorphine actually does', tag: 'Science', content: 'Buprenorphine is a partial opioid agonist. It stabilizes, doesn\'t get you high. People on MAT are 50% less likely to die from opioid overdose. MAT is recovery.' },
