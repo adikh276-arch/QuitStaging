@@ -66,11 +66,25 @@ export interface ActivityConfig {
   id: string;
   name: string;
   duration: string;
-  type: 'breathing' | 'timer' | 'checklist' | 'calculator' | 'journal';
+  type: 'breathing' | 'timer' | 'checklist' | 'calculator' | 'journal' | 'quiz' | 'visualization' | 'tap-game' | 'affirmation' | 'body-scan' | 'sorting';
   description?: string;
   phases?: { time: number; text: string }[];
   items?: { title: string; content: string }[];
   fields?: FieldConfig[];
+  // Quiz
+  questions?: { question: string; options: string[]; correctIndex: number; explanation: string }[];
+  // Visualization
+  scenes?: { text: string; emoji: string; duration: number }[];
+  // Tap-game
+  tapPrompt?: string;
+  tapGoal?: number;
+  // Affirmation
+  affirmations?: string[];
+  // Body-scan
+  bodyZones?: { name: string; prompt: string; emoji: string }[];
+  // Sorting
+  sortCategories?: string[];
+  sortItems?: { text: string; correct: string }[];
 }
 
 export interface ArticleConfig {
