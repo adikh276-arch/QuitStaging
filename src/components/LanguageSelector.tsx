@@ -24,7 +24,8 @@ const LanguageSelector = () => {
     { code: 'it', name: 'Italiano' },
     { code: 'pl', name: 'Polski' },
     { code: 'th', name: 'ไทย' },
-    { code: 'tl', name: 'Tagalog' }
+    { code: 'tl', name: 'Tagalog' },
+    { code: 'nl', name: 'Nederlands' }
   ];
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

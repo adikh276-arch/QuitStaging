@@ -4,6 +4,7 @@ import { ArrowLeft, ClipboardList, Calculator, Dumbbell, BookOpen, TrendingUp, C
 import { getSubstance } from '@/data/substances';
 import { getStreak, getEntries } from '@/data/storage';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import TrackerDetail from '@/components/TrackerDetail';
 import ToolModal from '@/components/ToolModal';
 import SubstanceIcon from '@/components/SubstanceIcon';
@@ -39,6 +40,7 @@ const sparkColors: Record<string, string> = {
 
 const SubstancePage = () => {
   const { slug } = useParams<{ slug: string }>();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const substance = getSubstance(slug || '');
   const [activeTracker, setActiveTracker] = useState<string | null>(null);
@@ -71,10 +73,10 @@ const SubstancePage = () => {
   const activeTrackerConfig = substance.trackers.find(t => t.id === activeTracker);
 
   const tools = [
-    { id: 'assessment', name: 'DSM-5 Assessment', icon: ClipboardList, desc: 'Self-evaluate your patterns' },
-    { id: 'calculator', name: 'Health Calculator', icon: Calculator, desc: 'Track health metrics' },
-    { id: 'activities', name: 'Healthy Activities', icon: Dumbbell, desc: 'Alternative habits' },
-    { id: 'learn', name: 'Learn & Educate', icon: BookOpen, desc: 'Understanding recovery' },
+    { id: 'assessment', name: t('app.assessment'), icon: ClipboardList, desc: t('app.assessment_desc') },
+    { id: 'calculator', name: t('app.calculator'), icon: Calculator, desc: t('app.calculator_desc') },
+    { id: 'activities', name: t('app.activities'), icon: Dumbbell, desc: t('app.activities_desc') },
+    { id: 'learn', name: t('app.learn'), icon: BookOpen, desc: t('app.learn_desc') },
   ];
 
   const severityScore = (val: unknown): number => {
@@ -140,7 +142,7 @@ const SubstancePage = () => {
       <div className="mx-auto max-w-lg px-5 pb-12">
         {/* Back button */}
         <button onClick={() => navigate('/')} className="flex items-center gap-1.5 py-5 text-sm text-muted-foreground hover:text-foreground transition-colors font-medium">
-          <ArrowLeft className="h-4 w-4" /> Back
+          <ArrowLeft className="h-4 w-4" /> {t('app.back')}
         </button>
 
         {/* Hero Card */}
@@ -171,8 +173,8 @@ const SubstancePage = () => {
                     <SubstanceIcon slug={substance.slug} className="h-7 w-7 text-white drop-shadow-sm" />
                   </motion.div>
                   <div>
-                    <h1 className="font-display text-2xl text-white drop-shadow-sm tracking-tight">{substance.name}</h1>
-                    <p className="text-[11px] text-white/50 font-medium mt-0.5 italic">{substance.descriptor}</p>
+                    <h1 className="font-display text-2xl text-white drop-shadow-sm tracking-tight">{t(`substances.${substance.slug}.name`)}</h1>
+                    <p className="text-[11px] text-white/50 font-medium mt-0.5 italic">{t(`substances.${substance.slug}.descriptor`)}</p>
                   </div>
                 </div>
                 <div className="text-right">
@@ -185,7 +187,7 @@ const SubstancePage = () => {
                   >
                     {streak.days}
                   </motion.span>
-                  <p className="text-[10px] text-white/50 font-bold tracking-[0.15em] uppercase mt-1">Days Clean</p>
+                  <p className="text-[10px] text-white/50 font-bold tracking-[0.15em] uppercase mt-1">{t('app.days_clean')}</p>
                 </div>
               </div>
 
@@ -205,7 +207,7 @@ const SubstancePage = () => {
                   >
                     <stat.icon className="h-4 w-4 mx-auto mb-2 text-white/60 group-hover:text-white/80 transition-colors" />
                     <p className="text-[15px] font-bold text-white leading-none">{stat.value}{stat.suffix}</p>
-                    <p className="text-[9px] text-white/40 font-bold uppercase tracking-[0.12em] mt-1.5">{stat.label}</p>
+                    <p className="text-[9px] text-white/40 font-bold uppercase tracking-[0.12em] mt-1.5">{t(`app.${stat.label.toLowerCase()}`)}</p>
                   </motion.div>
                 ))}
               </div>
@@ -213,7 +215,7 @@ const SubstancePage = () => {
               {/* Progress bar */}
               <div className="mt-6">
                 <div className="flex justify-between text-[10px] font-semibold mb-2">
-                  <span className="text-white/45 tracking-wide">Recovery Progress</span>
+                  <span className="text-white/45 tracking-wide">{t('app.recovery_progress')}</span>
                   <span className="text-white/70">{recoveryScore}%</span>
                 </div>
                 <div className="h-2.5 rounded-full bg-white/[0.1] overflow-hidden shadow-[inset_0_1px_2px_rgba(0,0,0,0.15)]">
@@ -234,9 +236,9 @@ const SubstancePage = () => {
           <div className="flex items-center justify-between mb-5 px-1">
             <div className="flex items-center gap-2">
               <Zap className="h-4 w-4 text-primary" />
-              <h2 className="font-display text-xl text-foreground">Daily Trackers</h2>
+              <h2 className="font-display text-xl text-foreground">{t('app.daily_trackers')}</h2>
             </div>
-            <span className="text-xs text-muted-foreground font-medium bg-muted rounded-full px-3 py-1">{substance.trackers.length} trackers</span>
+            <span className="text-xs text-muted-foreground font-medium bg-muted rounded-full px-3 py-1">{substance.trackers.length} {t('app.trackers')}</span>
           </div>
           <div className="grid grid-cols-2 gap-3">
             {substance.trackers.map((tracker, i) => {
@@ -253,18 +255,18 @@ const SubstancePage = () => {
                   onClick={() => setActiveTracker(tracker.id)}
                   className={`group relative flex flex-col rounded-2xl border-2 bg-card p-4 text-left transition-all duration-300 hover:shadow-lg hover:-translate-y-1 active:scale-[0.97] ${cardAccent}`}
                 >
-                  <div className="flex items-start justify-between w-full mb-3">
-                    <p className="text-sm font-bold text-foreground leading-tight pr-2">{tracker.name}</p>
                     {hasToday ? (
                       <span className="shrink-0 flex items-center gap-1 rounded-lg bg-primary/10 px-2.5 py-1 text-[10px] font-bold text-primary">
-                        Done
+                        {t('app.done')}
                       </span>
                     ) : (
                       <span className="shrink-0 rounded-lg bg-accent/10 px-2.5 py-1 text-[10px] font-bold text-accent">
-                        Log
+                        {t('app.log')}
                       </span>
                     )}
                   </div>
+                  <div className="flex items-start justify-between w-full mb-3">
+                    <p className="text-sm font-bold text-foreground leading-tight pr-2">{t(`substances.${substance.slug}.trackers.${tracker.id}.name`)}</p>
                   <div className="h-10 w-full mt-auto opacity-60 group-hover:opacity-100 transition-opacity">
                     {sparkData.length > 1 ? (
                       <ResponsiveContainer width="100%" height="100%">
@@ -274,7 +276,7 @@ const SubstancePage = () => {
                       </ResponsiveContainer>
                     ) : (
                       <div className="h-full w-full flex items-center justify-center">
-                        <p className="text-[10px] text-muted-foreground">No data yet</p>
+                        <p className="text-[10px] text-muted-foreground">{t('app.no_data')}</p>
                       </div>
                     )}
                   </div>
@@ -289,7 +291,7 @@ const SubstancePage = () => {
         <div className="mt-10">
           <div className="flex items-center gap-2 mb-5 px-1">
             <Lightbulb className="h-4 w-4 text-primary" />
-            <h2 className="font-display text-xl text-foreground">Tools & Resources</h2>
+            <h2 className="font-display text-xl text-foreground">{t('app.tools_resources')}</h2>
           </div>
           <div className="grid grid-cols-2 gap-3">
             {tools.map((tool, i) => (

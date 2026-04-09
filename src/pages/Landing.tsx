@@ -4,6 +4,7 @@ import { substances } from '@/data/substances';
 import { getStreak } from '@/data/storage';
 import { Shield, Sparkles, ArrowRight, Flame, Heart } from 'lucide-react';
 import SubstanceIcon from '@/components/SubstanceIcon';
+import { useTranslation } from 'react-i18next';
 
 const substanceGradients: Record<string, string> = {
   alcohol: 'from-red-500/90 to-rose-600/90',
@@ -29,6 +30,7 @@ const substanceBgs: Record<string, string> = {
 
 const SubstanceCard = ({ substance, index }: { substance: typeof substances[0]; index: number }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const streak = getStreak(substance.slug);
 
   return (
@@ -44,8 +46,8 @@ const SubstanceCard = ({ substance, index }: { substance: typeof substances[0]; 
       </div>
 
       <div className="flex-1 min-w-0">
-        <h3 className="font-display text-[17px] text-foreground leading-tight">{substance.name}</h3>
-        <p className="text-xs text-muted-foreground mt-1">{substance.descriptor}</p>
+        <h3 className="font-display text-[17px] text-foreground leading-tight">{t(`substances.${substance.slug}.name`)}</h3>
+        <p className="text-xs text-muted-foreground mt-1">{t(`substances.${substance.slug}.descriptor`)}</p>
       </div>
 
       <div className="shrink-0">
@@ -56,7 +58,7 @@ const SubstanceCard = ({ substance, index }: { substance: typeof substances[0]; 
           </div>
         ) : (
           <div className="flex items-center gap-1 rounded-xl bg-muted px-3 py-2 text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
-            Start <ArrowRight className="h-3 w-3" />
+            {t('app.start')} <ArrowRight className="h-3 w-3" />
           </div>
         )}
       </div>
@@ -65,6 +67,7 @@ const SubstanceCard = ({ substance, index }: { substance: typeof substances[0]; 
 };
 
 const Landing = () => {
+  const { t } = useTranslation();
   const totalDays = substances.reduce((acc, s) => acc + getStreak(s.slug).days, 0);
   const activeCount = substances.filter(s => getStreak(s.slug).days > 0).length;
 
@@ -80,13 +83,13 @@ const Landing = () => {
         >
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 shadow-sm">
             <Shield className="h-3.5 w-3.5 text-primary" />
-            <span className="text-xs font-semibold text-primary tracking-wide">100% Private · On-Device</span>
+            <span className="text-xs font-semibold text-primary tracking-wide">{t('app.private_note')}</span>
           </div>
           <h1 className="font-display text-5xl tracking-tight text-foreground leading-[1.1]">
             Quit<span className="text-primary">Mantra</span>
           </h1>
           <p className="mt-3 text-sm text-muted-foreground max-w-[280px] mx-auto leading-relaxed">
-            Track your recovery journey with clarity and compassion.
+            {t('app.tagline')}
           </p>
         </motion.div>
 
@@ -102,17 +105,17 @@ const Landing = () => {
               <div className="flex items-center gap-5">
                 <div className="text-center">
                   <p className="text-3xl font-bold tracking-tight">{activeCount}</p>
-                  <p className="text-[11px] text-white/70 font-medium mt-0.5">Active</p>
+                  <p className="text-[11px] text-white/70 font-medium mt-0.5">{t('app.active')}</p>
                 </div>
                 <div className="h-10 w-px bg-white/20 rounded-full" />
                 <div className="text-center">
                   <p className="text-3xl font-bold tracking-tight">{totalDays}</p>
-                  <p className="text-[11px] text-white/70 font-medium mt-0.5">Total Days</p>
+                  <p className="text-[11px] text-white/70 font-medium mt-0.5">{t('app.total_days')}</p>
                 </div>
               </div>
               <div className="flex flex-col items-center gap-1 rounded-2xl bg-white/15 backdrop-blur-sm px-4 py-3">
                 <Sparkles className="h-5 w-5 text-white/90" />
-                <p className="text-[10px] text-white/70 font-semibold">Strong</p>
+                <p className="text-[10px] text-white/70 font-semibold">{t('app.strong')}</p>
               </div>
             </div>
           </motion.div>
@@ -126,7 +129,7 @@ const Landing = () => {
           className="flex items-center gap-2 mb-4 px-1"
         >
           <Heart className="h-4 w-4 text-primary" />
-          <h2 className="font-display text-lg text-foreground">Your Journey</h2>
+          <h2 className="font-display text-lg text-foreground">{t('app.your_journey')}</h2>
         </motion.div>
 
         {/* Substance List */}
@@ -145,7 +148,7 @@ const Landing = () => {
         >
           <p className="text-xs text-muted-foreground/60 flex items-center justify-center gap-1.5">
             <Shield className="h-3 w-3" />
-            All data stays on your device. Nothing is ever shared.
+            {t('app.privacy_footer')}
           </p>
         </motion.div>
       </div>

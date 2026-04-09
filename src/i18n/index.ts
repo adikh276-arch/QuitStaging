@@ -20,6 +20,7 @@ import it from './locales/it.json';
 import pl from './locales/pl.json';
 import th from './locales/th.json';
 import tl from './locales/tl.json';
+import nl from './locales/nl.json';
 
 const resources = {
   en: { translation: en },
@@ -40,7 +41,8 @@ const resources = {
   it: { translation: it },
   pl: { translation: pl },
   th: { translation: th },
-  tl: { translation: tl }
+  tl: { translation: tl },
+  nl: { translation: nl }
 };
 
 const getInitialLanguage = () => {
