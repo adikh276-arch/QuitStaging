@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import SubstancePage from "./pages/SubstancePage.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import LanguageSelector from "./components/LanguageSelector";
 
 const queryClient = new QueryClient();
 
@@ -14,7 +15,8 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter basename="/quit">
+        <LanguageSelector />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/:slug" element={<SubstancePage />} />
