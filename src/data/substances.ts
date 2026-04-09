@@ -692,9 +692,38 @@ export const substances: SubstanceConfig[] = [
       },
     },
     activities: [
-      { id: 'diaphragmatic', name: 'Diaphragmatic Breathing', duration: '4 min', type: 'breathing', description: 'Activates GABA — the same system benzos work on.', phases: [{ time: 0, text: 'Inhale into your belly for 4 counts...' }, { time: 4, text: 'Hold for 2 counts...' }, { time: 6, text: 'Exhale slowly for 8 counts...' }, { time: 14, text: 'Rest for 2 counts...' }] },
-      { id: 'distraction', name: 'Structured Distraction', duration: '3 min', type: 'checklist', items: [{ title: 'Count objects of one colour', content: 'Colour sorting engages visual cortex — neurologically incompatible with anxiety loop.' }, { title: 'Describe your environment in detail', content: 'Verbal description activates prefrontal cortex, overriding amygdala\'s panic signal.' }, { title: 'Name 5 capitals, 5 animals, 5 foods', content: 'Categorical retrieval occupies the exact region driving the anxiety spiral.' }, { title: 'Write 3 things that went well today', content: 'Interrupts catastrophic thinking by forcing retrieval of positive memory.' }] },
-      { id: 'pmr', name: 'Progressive Muscle Relaxation', duration: '5 min', type: 'timer', phases: [{ time: 0, text: 'Feet and calves — tense hard, then release.' }, { time: 60, text: 'Thighs and glutes. Squeeze, hold, let go.' }, { time: 120, text: 'Core and back — tense, exhale and release.' }, { time: 180, text: 'Hands, arms, shoulders — clench, release.' }, { time: 240, text: 'Face — scrunch everything. Hold. Release.' }, { time: 280, text: 'Complete. Parasympathetic nervous system activated.' }] },
+      {
+        id: 'gaba-breathing', name: 'GABA Activation Breathing', duration: '5 min', type: 'breathing',
+        description: 'This specific breathing ratio activates your GABA system — the same pathway benzos target.',
+        phases: [
+          { time: 0, text: 'Inhale through your nose for 4 counts. Fill your belly, not your chest.' },
+          { time: 4, text: 'Hold gently for 2 counts. No strain.' },
+          { time: 6, text: 'Exhale through pursed lips for 8 counts. The long exhale is the key — it stimulates your vagus nerve.' },
+          { time: 14, text: 'Pause for 2 counts. Let your body settle before the next breath.' },
+        ],
+      },
+      {
+        id: 'window-wave-log', name: 'Window & Wave Journal', duration: '3 min', type: 'journal',
+        description: 'Benzo withdrawal alternates between "windows" (feeling normal) and "waves" (symptoms return). Track the pattern.',
+        fields: [
+          { key: 'state', label: 'Are you in a window or a wave right now?', type: 'chips', options: ['Window', 'Wave', 'In between'] },
+          { key: 'duration', label: 'How long has this phase lasted?', type: 'chips', options: ['Hours', '1 day', '2-3 days', 'A week+'] },
+          { key: 'symptoms', label: 'What symptoms are present?', type: 'textarea', placeholder: 'Anxiety, depersonalization, muscle tension, tinnitus...' },
+          { key: 'insight', label: 'What helped during your last window?', type: 'textarea', placeholder: 'Walking, magnesium, distraction, sleep...' },
+        ],
+      },
+      {
+        id: 'sensory-anchor', name: 'Sensory Grounding Anchor', duration: '3 min', type: 'timer',
+        description: 'When depersonalization or panic hits during taper, this pulls you back to reality.',
+        phases: [
+          { time: 0, text: 'Hold something cold — an ice cube, a cold can, a frozen spoon. Focus entirely on the sensation.' },
+          { time: 30, text: 'The cold is real. You are real. Name 5 things you can see. Say them out loud.' },
+          { time: 60, text: 'Stamp your feet on the ground. Hard. Feel the floor. You are here.' },
+          { time: 90, text: 'Smell something strong — coffee beans, peppermint, citrus peel. Inhale deeply.' },
+          { time: 120, text: 'Splash cold water on your wrists. The depersonalization will pass. It always does.' },
+          { time: 160, text: 'You are safe. This is withdrawal, not danger. Your brain is recalibrating. This is temporary.' },
+        ],
+      },
     ],
     articles: [
       { id: 'a1', title: 'Why benzo withdrawal can be dangerous', tag: 'Safety', content: 'Benzos enhance GABA. Abrupt cessation can trigger seizures. Always taper under medical supervision.' },
