@@ -159,6 +159,26 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
   const [seconds, setSeconds] = useState(0);
   const [running, setRunning] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  // Quiz state
+  const [quizIndex, setQuizIndex] = useState(0);
+  const [quizAnswers, setQuizAnswers] = useState<(number | null)[]>([]);
+  const [quizRevealed, setQuizRevealed] = useState(false);
+  // Visualization state
+  const [vizIndex, setVizIndex] = useState(0);
+  // Tap game state
+  const [taps, setTaps] = useState(0);
+  const [tapDone, setTapDone] = useState(false);
+  // Affirmation state
+  const [affIndex, setAffIndex] = useState(0);
+  const [affSaved, setAffSaved] = useState<Set<number>>(new Set());
+  // Body scan state
+  const [bodyIndex, setBodyIndex] = useState(-1);
+  const [bodyDone, setBodyDone] = useState(false);
+  // Sorting state
+  const [sortAnswers, setSortAnswers] = useState<Record<number, string>>({});
+  const [sortRevealed, setSortRevealed] = useState(false);
+  // Journal state
+  const [journalValues, setJournalValues] = useState<Record<string, any>>({});
 
   useEffect(() => {
     if (running) {
@@ -169,14 +189,319 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, [running]);
 
-  const currentPhase = activity.phases ? [...activity.phases].reverse().find((p: any) => seconds >= p.time) : null;
-  const totalSeconds = activity.type === 'timer' || activity.type === 'breathing' ? (activity.phases ? Math.max(...activity.phases.map((p: any) => p.time)) + 60 : 300) : 0;
+  // Auto-advance visualization
+  useEffect(() => {
+    if (activity.type !== 'visualization' || !running || !activity.scenes) return;
+    const scene = activity.scenes[vizIndex];
+    if (!scene) return;
+    const timer = setTimeout(() => {
+      if (vizIndex < activity.scenes.length - 1) setVizIndex(v => v + 1);
+      else setRunning(false);
+    }, scene.duration * 1000);
+    return () => clearTimeout(timer);
+  }, [running, vizIndex, activity]);
 
+  const currentPhase = activity.phases ? [...activity.phases].reverse().find((p: any) => seconds >= p.time) : null;
+
+  const backBtn = <button onClick={onBack} className="mb-4 text-xs text-muted-foreground hover:text-foreground transition-colors">← Back</button>;
+
+  // ===== QUIZ =====
+  if (activity.type === 'quiz' && activity.questions) {
+    const q = activity.questions[quizIndex];
+    const totalCorrect = quizAnswers.filter((a, i) => a === activity.questions![i]?.correctIndex).length;
+    if (quizIndex >= activity.questions.length) {
+      return (
+        <div className="text-center">
+          {backBtn}
+          <h2 className="mb-2 font-display text-xl text-foreground">{activity.name}</h2>
+          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="my-8">
+            <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-primary/15">
+              <span className="text-4xl font-bold text-primary">{totalCorrect}/{activity.questions.length}</span>
+            </div>
+            <p className="mt-4 text-sm text-muted-foreground">
+              {totalCorrect === activity.questions.length ? '🎉 Perfect! You really know your stuff.' : totalCorrect > activity.questions.length / 2 ? '💪 Great knowledge! Review the ones you missed.' : '📚 Good effort — learning is part of recovery.'}
+            </p>
+          </motion.div>
+          <button onClick={() => { setQuizIndex(0); setQuizAnswers([]); setQuizRevealed(false); }} className="rounded-xl bg-muted px-6 py-2 text-sm font-medium">Retake</button>
+        </div>
+      );
+    }
+    return (
+      <div>
+        {backBtn}
+        <div className="mb-4 h-2 rounded-full bg-muted"><div className="h-2 rounded-full bg-primary transition-all" style={{ width: `${((quizIndex + 1) / activity.questions.length) * 100}%` }} /></div>
+        <p className="mb-1 text-xs text-muted-foreground">Question {quizIndex + 1} of {activity.questions.length}</p>
+        <motion.p key={quizIndex} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="mb-6 text-base font-semibold text-foreground">{q.question}</motion.p>
+        <div className="space-y-2">
+          {q.options.map((opt: string, i: number) => {
+            const selected = quizAnswers[quizIndex] === i;
+            const isCorrect = i === q.correctIndex;
+            const revealed = quizRevealed;
+            return (
+              <button key={i} disabled={revealed} onClick={() => { setQuizAnswers(prev => { const n = [...prev]; n[quizIndex] = i; return n; }); setQuizRevealed(true); }}
+                className={`w-full rounded-xl border-2 p-3.5 text-left text-sm font-medium transition-all ${revealed ? (isCorrect ? 'border-primary bg-primary/10 text-primary' : selected ? 'border-destructive bg-destructive/10 text-destructive' : 'border-border text-muted-foreground') : 'border-border hover:border-primary/50 text-foreground'}`}>
+                <span className="mr-2 font-bold text-muted-foreground">{String.fromCharCode(65 + i)}.</span> {opt}
+              </button>
+            );
+          })}
+        </div>
+        {quizRevealed && (
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-4">
+            <p className="text-xs text-muted-foreground leading-relaxed rounded-lg bg-muted p-3">{q.explanation}</p>
+            <button onClick={() => { setQuizIndex(quizIndex + 1); setQuizRevealed(false); }} className="mt-3 rounded-xl bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground">
+              {quizIndex < activity.questions.length - 1 ? 'Next' : 'See Results'}
+            </button>
+          </motion.div>
+        )}
+      </div>
+    );
+  }
+
+  // ===== VISUALIZATION =====
+  if (activity.type === 'visualization' && activity.scenes) {
+    const scene = activity.scenes[vizIndex];
+    return (
+      <div className="text-center">
+        {backBtn}
+        <h2 className="mb-2 font-display text-xl text-foreground">{activity.name}</h2>
+        {activity.description && <p className="mb-6 text-xs text-muted-foreground">{activity.description}</p>}
+        <motion.div key={vizIndex} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="mx-auto my-8">
+          <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+            className="mx-auto flex h-36 w-36 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-accent/10 shadow-lg">
+            <span className="text-6xl">{scene?.emoji || '🌟'}</span>
+          </motion.div>
+          <motion.p key={scene?.text} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+            className="mt-8 text-sm text-foreground leading-relaxed max-w-xs mx-auto">{scene?.text}</motion.p>
+        </motion.div>
+        <div className="flex items-center justify-center gap-2 mb-4">
+          {activity.scenes.map((_: any, i: number) => (
+            <div key={i} className={`h-2 rounded-full transition-all ${i === vizIndex ? 'w-6 bg-primary' : i < vizIndex ? 'w-2 bg-primary/40' : 'w-2 bg-muted'}`} />
+          ))}
+        </div>
+        <button onClick={() => { if (!running) { setRunning(true); setVizIndex(0); } else { setRunning(false); } }}
+          className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground">
+          {running ? <><Pause className="h-4 w-4" /> Pause</> : <><Play className="h-4 w-4" /> {vizIndex > 0 ? 'Continue' : 'Begin Journey'}</>}
+        </button>
+      </div>
+    );
+  }
+
+  // ===== TAP GAME =====
+  if (activity.type === 'tap-game') {
+    const goal = activity.tapGoal || 30;
+    const progress = Math.min(100, (taps / goal) * 100);
+    if (tapDone) {
+      return (
+        <div className="text-center">
+          {backBtn}
+          <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring' }}>
+            <div className="text-6xl mb-4">🏆</div>
+            <h2 className="font-display text-2xl text-foreground mb-2">Craving Crushed!</h2>
+            <p className="text-sm text-muted-foreground">You tapped {taps} times. The craving lost. You won.</p>
+            <button onClick={() => { setTaps(0); setTapDone(false); }} className="mt-6 rounded-xl bg-muted px-6 py-2 text-sm font-medium">Go Again</button>
+          </motion.div>
+        </div>
+      );
+    }
+    return (
+      <div className="text-center">
+        {backBtn}
+        <h2 className="mb-2 font-display text-xl text-foreground">{activity.name}</h2>
+        <p className="mb-6 text-xs text-muted-foreground">{activity.tapPrompt || activity.description}</p>
+        <div className="relative mx-auto mb-6">
+          <svg viewBox="0 0 120 120" className="w-40 h-40 mx-auto">
+            <circle cx="60" cy="60" r="54" fill="none" stroke="hsl(var(--muted))" strokeWidth="8" />
+            <motion.circle cx="60" cy="60" r="54" fill="none" stroke="hsl(var(--primary))" strokeWidth="8"
+              strokeDasharray={339.3} strokeDashoffset={339.3 * (1 - progress / 100)} strokeLinecap="round"
+              transform="rotate(-90 60 60)" />
+          </svg>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-3xl font-bold text-foreground">{taps}</span>
+          </div>
+        </div>
+        <motion.button whileTap={{ scale: 0.9 }} onClick={() => { const next = taps + 1; setTaps(next); if (next >= goal) setTapDone(true); }}
+          className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-primary shadow-lg active:shadow-sm transition-shadow">
+          <span className="text-3xl text-primary-foreground">👊</span>
+        </motion.button>
+        <p className="mt-3 text-xs text-muted-foreground">{goal - taps} taps to go</p>
+      </div>
+    );
+  }
+
+  // ===== AFFIRMATION =====
+  if (activity.type === 'affirmation' && activity.affirmations) {
+    const aff = activity.affirmations[affIndex];
+    return (
+      <div className="text-center">
+        {backBtn}
+        <h2 className="mb-2 font-display text-xl text-foreground">{activity.name}</h2>
+        <p className="mb-8 text-xs text-muted-foreground">{activity.description}</p>
+        <AnimatePresence mode="wait">
+          <motion.div key={affIndex} initial={{ opacity: 0, rotateY: 90 }} animate={{ opacity: 1, rotateY: 0 }} exit={{ opacity: 0, rotateY: -90 }}
+            transition={{ duration: 0.4 }}
+            className="mx-auto max-w-sm rounded-2xl border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5 p-8 shadow-lg min-h-[180px] flex flex-col items-center justify-center">
+            <span className="text-4xl mb-4">{affSaved.has(affIndex) ? '💛' : '✨'}</span>
+            <p className="text-lg font-semibold text-foreground leading-relaxed italic">"{aff}"</p>
+          </motion.div>
+        </AnimatePresence>
+        <div className="flex items-center justify-center gap-4 mt-8">
+          <button disabled={affIndex === 0} onClick={() => setAffIndex(affIndex - 1)}
+            className="rounded-full bg-muted px-4 py-2 text-sm font-medium disabled:opacity-30">← Prev</button>
+          <button onClick={() => setAffSaved(prev => { const n = new Set(prev); if (n.has(affIndex)) n.delete(affIndex); else n.add(affIndex); return n; })}
+            className={`rounded-full px-4 py-2 text-sm font-medium ${affSaved.has(affIndex) ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+            {affSaved.has(affIndex) ? '💛 Saved' : '🤍 Save'}
+          </button>
+          <button disabled={affIndex >= activity.affirmations.length - 1} onClick={() => setAffIndex(affIndex + 1)}
+            className="rounded-full bg-muted px-4 py-2 text-sm font-medium disabled:opacity-30">Next →</button>
+        </div>
+        <p className="mt-4 text-[10px] text-muted-foreground">{affIndex + 1} / {activity.affirmations.length} · {affSaved.size} saved</p>
+      </div>
+    );
+  }
+
+  // ===== BODY SCAN =====
+  if (activity.type === 'body-scan' && activity.bodyZones) {
+    if (bodyDone) {
+      return (
+        <div className="text-center">
+          {backBtn}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <div className="text-5xl mb-4">🧘</div>
+            <h2 className="font-display text-xl text-foreground mb-2">Scan Complete</h2>
+            <p className="text-sm text-muted-foreground mb-6">You checked in with {activity.bodyZones.length} areas. Awareness is the first step to healing.</p>
+            <button onClick={() => { setBodyIndex(-1); setBodyDone(false); }} className="rounded-xl bg-muted px-6 py-2 text-sm font-medium">Repeat</button>
+          </motion.div>
+        </div>
+      );
+    }
+    if (bodyIndex === -1) {
+      return (
+        <div className="text-center">
+          {backBtn}
+          <h2 className="mb-2 font-display text-xl text-foreground">{activity.name}</h2>
+          <p className="mb-6 text-xs text-muted-foreground">{activity.description}</p>
+          <div className="grid grid-cols-2 gap-3 mb-6">
+            {activity.bodyZones.map((zone: any, i: number) => (
+              <div key={i} className="rounded-xl border border-border bg-card p-4 text-center">
+                <span className="text-2xl">{zone.emoji}</span>
+                <p className="text-xs font-medium text-foreground mt-1">{zone.name}</p>
+              </div>
+            ))}
+          </div>
+          <button onClick={() => setBodyIndex(0)} className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground">
+            Begin Body Scan
+          </button>
+        </div>
+      );
+    }
+    const zone = activity.bodyZones[bodyIndex];
+    return (
+      <div className="text-center">
+        {backBtn}
+        <div className="mb-4 h-2 rounded-full bg-muted"><div className="h-2 rounded-full bg-primary transition-all" style={{ width: `${((bodyIndex + 1) / activity.bodyZones.length) * 100}%` }} /></div>
+        <p className="text-xs text-muted-foreground mb-6">Zone {bodyIndex + 1} of {activity.bodyZones.length}</p>
+        <motion.div key={bodyIndex} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <motion.div animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 3, repeat: Infinity }}
+            className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-primary/10 mb-6">
+            <span className="text-5xl">{zone.emoji}</span>
+          </motion.div>
+          <h3 className="font-display text-lg text-foreground mb-3">{zone.name}</h3>
+          <p className="text-sm text-foreground leading-relaxed max-w-xs mx-auto mb-8">{zone.prompt}</p>
+        </motion.div>
+        <button onClick={() => { if (bodyIndex < activity.bodyZones.length - 1) setBodyIndex(bodyIndex + 1); else setBodyDone(true); }}
+          className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground">
+          {bodyIndex < activity.bodyZones.length - 1 ? 'Next Zone →' : 'Complete ✓'}
+        </button>
+      </div>
+    );
+  }
+
+  // ===== SORTING =====
+  if (activity.type === 'sorting' && activity.sortItems && activity.sortCategories) {
+    const allAnswered = Object.keys(sortAnswers).length === activity.sortItems.length;
+    const correctCount = activity.sortItems.filter((item: any, i: number) => sortAnswers[i] === item.correct).length;
+    return (
+      <div>
+        {backBtn}
+        <h2 className="mb-2 font-display text-xl text-foreground">{activity.name}</h2>
+        <p className="mb-6 text-xs text-muted-foreground">{activity.description}</p>
+        <div className="space-y-3">
+          {activity.sortItems.map((item: any, i: number) => (
+            <motion.div key={i} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
+              className={`rounded-xl border-2 p-3.5 transition-all ${sortRevealed ? (sortAnswers[i] === item.correct ? 'border-primary bg-primary/5' : 'border-destructive bg-destructive/5') : 'border-border'}`}>
+              <p className="text-sm font-medium text-foreground mb-2">{item.text}</p>
+              <div className="flex gap-2 flex-wrap">
+                {activity.sortCategories.map((cat: string) => (
+                  <button key={cat} disabled={sortRevealed}
+                    onClick={() => setSortAnswers(prev => ({ ...prev, [i]: cat }))}
+                    className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${sortAnswers[i] === cat ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}`}>
+                    {cat}
+                  </button>
+                ))}
+              </div>
+              {sortRevealed && sortAnswers[i] !== item.correct && (
+                <p className="mt-1 text-[10px] text-muted-foreground">Correct: {item.correct}</p>
+              )}
+            </motion.div>
+          ))}
+        </div>
+        {allAnswered && !sortRevealed && (
+          <button onClick={() => setSortRevealed(true)} className="mt-4 w-full rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground">Check Answers</button>
+        )}
+        {sortRevealed && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 rounded-xl bg-primary/10 p-4 text-center">
+            <p className="text-sm font-semibold text-primary">{correctCount}/{activity.sortItems.length} correct {correctCount === activity.sortItems.length ? '🎉' : '— keep learning!'}</p>
+          </motion.div>
+        )}
+      </div>
+    );
+  }
+
+  // ===== JOURNAL =====
+  if (activity.type === 'journal') {
+    return (
+      <div>
+        {backBtn}
+        <h2 className="mb-2 font-display text-xl text-foreground">{activity.name}</h2>
+        {activity.description && <p className="mb-6 text-xs text-muted-foreground">{activity.description}</p>}
+        <div className="space-y-4">
+          {activity.fields?.map((field: any) => (
+            <div key={field.key}>
+              <label className="text-xs font-medium text-foreground mb-1 block">{field.label}</label>
+              {field.type === 'textarea' ? (
+                <textarea value={journalValues[field.key] || ''} onChange={e => setJournalValues(prev => ({ ...prev, [field.key]: e.target.value }))}
+                  placeholder={field.placeholder} className="w-full rounded-xl border border-border bg-card p-3 text-sm text-foreground placeholder:text-muted-foreground min-h-[80px] resize-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all" />
+              ) : field.type === 'slider' ? (
+                <div>
+                  <div className="flex justify-between text-xs mb-1"><span className="text-muted-foreground">{field.min}</span><span className="text-primary font-bold">{journalValues[field.key] ?? field.min}</span><span className="text-muted-foreground">{field.max}</span></div>
+                  <input type="range" min={field.min} max={field.max} step={field.step || 1} value={journalValues[field.key] ?? field.min} onChange={e => setJournalValues(prev => ({ ...prev, [field.key]: Number(e.target.value) }))} className="w-full accent-primary" />
+                </div>
+              ) : field.type === 'chips' ? (
+                <div className="flex flex-wrap gap-2">
+                  {field.options?.map((opt: string) => (
+                    <button key={opt} onClick={() => setJournalValues(prev => ({ ...prev, [field.key]: opt }))}
+                      className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${journalValues[field.key] === opt ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>{opt}</button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ))}
+        </div>
+        {Object.keys(journalValues).length > 0 && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-6 rounded-xl bg-primary/10 p-4 text-center">
+            <p className="text-sm font-semibold text-primary">📝 Reflection captured. Awareness is progress.</p>
+          </motion.div>
+        )}
+      </div>
+    );
+  }
+
+  // ===== CHECKLIST =====
   if (activity.type === 'checklist') {
     const allDone = activity.items && checkedItems.size === activity.items.length;
     return (
       <div>
-        <button onClick={onBack} className="mb-4 text-xs text-muted-foreground">← Back</button>
+        {backBtn}
         <h2 className="mb-4 font-display text-xl text-foreground">{activity.name}</h2>
         {activity.description && <p className="mb-4 text-sm text-muted-foreground">{activity.description}</p>}
         <div className="space-y-3">
@@ -203,33 +528,23 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
     );
   }
 
-  // Timer / Breathing
+  // ===== TIMER / BREATHING (default) =====
+  const totalSeconds = activity.phases ? Math.max(...activity.phases.map((p: any) => p.time)) + 60 : 300;
   return (
     <div className="text-center">
-      <button onClick={onBack} className="mb-4 self-start text-xs text-muted-foreground">← Back</button>
+      {backBtn}
       <h2 className="mb-2 font-display text-xl text-foreground">{activity.name}</h2>
       {activity.description && <p className="mb-6 text-xs text-muted-foreground">{activity.description}</p>}
-
       {activity.type === 'breathing' && (
-        <motion.div
-          animate={{ scale: running ? [1, 1.4, 1.4, 1, 1] : 1 }}
-          transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
-          className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-full bg-primary/20"
-        >
+        <motion.div animate={{ scale: running ? [1, 1.4, 1.4, 1, 1] : 1 }} transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+          className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-full bg-primary/20">
           <div className="h-20 w-20 rounded-full bg-primary/40" />
         </motion.div>
       )}
-
-      <p className="mb-4 text-4xl font-bold text-foreground font-body">
-        {Math.floor(seconds / 60)}:{(seconds % 60).toString().padStart(2, '0')}
-      </p>
-
+      <p className="mb-4 text-4xl font-bold text-foreground font-body">{Math.floor(seconds / 60)}:{(seconds % 60).toString().padStart(2, '0')}</p>
       {currentPhase && (
-        <motion.p key={currentPhase.text} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6 text-sm text-foreground leading-relaxed">
-          {currentPhase.text}
-        </motion.p>
+        <motion.p key={currentPhase.text} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6 text-sm text-foreground leading-relaxed">{currentPhase.text}</motion.p>
       )}
-
       <button onClick={() => setRunning(!running)} className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground">
         {running ? <><Pause className="h-4 w-4" /> Pause</> : <><Play className="h-4 w-4" /> {seconds > 0 ? 'Resume' : 'Start'}</>}
       </button>
