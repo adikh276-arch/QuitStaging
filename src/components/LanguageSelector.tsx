@@ -32,6 +32,13 @@ const LanguageSelector = () => {
     const lang = e.target.value;
     i18n.changeLanguage(lang);
     localStorage.setItem('language', lang);
+    
+    // Update URL param if it exists or was requested
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('lang')) {
+      url.searchParams.set('lang', lang);
+      window.history.replaceState({}, '', url);
+    }
   };
 
   return (

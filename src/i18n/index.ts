@@ -49,6 +49,7 @@ const getInitialLanguage = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const langQuery = urlParams.get('lang');
   if (langQuery && resources[langQuery as keyof typeof resources]) {
+    localStorage.setItem('language', langQuery);
     return langQuery;
   }
   const localLang = localStorage.getItem('language');
