@@ -148,68 +148,82 @@ const SubstancePage = () => {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${gradientClass} p-7 shadow-2xl`}
+          className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${gradientClass} p-[2px] shadow-2xl`}
         >
-          <div className="absolute -right-6 -top-6 h-28 w-28 rounded-full bg-white/10 blur-sm" />
-          <div className="absolute -bottom-8 -left-8 h-36 w-36 rounded-full bg-white/5 blur-sm" />
-          <div className="absolute right-12 bottom-4 h-16 w-16 rounded-full bg-white/5" />
+          {/* Outer glow border via gradient wrapper */}
+          <div className="relative overflow-hidden rounded-[22px] bg-gradient-to-br from-white/[0.12] to-white/[0.04] backdrop-blur-xl p-6">
+            {/* Decorative orbs */}
+            <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/[0.08] blur-2xl" />
+            <div className="absolute -bottom-12 -left-12 h-48 w-48 rounded-full bg-white/[0.05] blur-2xl" />
+            <div className="absolute right-1/4 top-1/3 h-24 w-24 rounded-full bg-white/[0.04] blur-xl" />
+            <div className="absolute left-1/3 bottom-8 h-16 w-16 rounded-full bg-white/[0.06] blur-lg" />
 
-          <div className="relative z-10">
-            <div className="flex items-start justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-sm shadow-inner">
-                  <SubstanceIcon slug={substance.slug} className="h-7 w-7 text-white" />
+            <div className="relative z-10">
+              {/* Top row: icon + name | days counter */}
+              <div className="flex items-start justify-between mb-7">
+                <div className="flex items-center gap-3.5">
+                  <motion.div
+                    initial={{ rotate: -15, scale: 0.7, opacity: 0 }}
+                    animate={{ rotate: 0, scale: 1, opacity: 1 }}
+                    transition={{ type: 'spring', stiffness: 200, delay: 0.15 }}
+                    className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_4px_12px_rgba(0,0,0,0.1)] border border-white/20"
+                  >
+                    <SubstanceIcon slug={substance.slug} className="h-7 w-7 text-white drop-shadow-sm" />
+                  </motion.div>
+                  <div>
+                    <h1 className="font-display text-2xl text-white drop-shadow-sm tracking-tight">{substance.name}</h1>
+                    <p className="text-[11px] text-white/50 font-medium mt-0.5 italic">{substance.descriptor}</p>
+                  </div>
                 </div>
-                <div>
-                  <h1 className="font-display text-2xl text-white drop-shadow-sm">{substance.name}</h1>
-                  <p className="text-xs text-white/60 font-medium mt-0.5">{substance.descriptor}</p>
+                <div className="text-right">
+                  <motion.span
+                    initial={{ scale: 0.3, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: 'spring', stiffness: 160, delay: 0.25 }}
+                    className="block text-[52px] font-bold tracking-tighter text-white leading-none"
+                    style={{ textShadow: '0 2px 20px rgba(255,255,255,0.25)' }}
+                  >
+                    {streak.days}
+                  </motion.span>
+                  <p className="text-[10px] text-white/50 font-bold tracking-[0.15em] uppercase mt-1">Days Clean</p>
                 </div>
               </div>
-              <div className="text-right">
-                <motion.span
-                  initial={{ scale: 0.5, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: 'spring', stiffness: 180, delay: 0.25 }}
-                  className="block text-5xl font-bold tracking-tighter text-white drop-shadow-lg"
-                >
-                  {streak.days}
-                </motion.span>
-                <p className="text-[11px] text-white/60 font-semibold tracking-wide uppercase">Days Clean</p>
-              </div>
-            </div>
 
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                { icon: Flame, value: `${streak.days}`, label: 'Streak', suffix: 'd' },
-                { icon: TrendingUp, value: `${recoveryScore}`, label: 'Recovery', suffix: '%' },
-                { icon: Calendar, value: streak.startDate ? new Date(streak.startDate).toLocaleDateString(undefined, { day: 'numeric', month: 'short' }) : '—', label: 'Started', suffix: '' },
-              ].map((stat, i) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.35 + i * 0.08 }}
-                  className="rounded-2xl bg-white/10 backdrop-blur-sm px-3 py-3 text-center border border-white/10"
-                >
-                  <stat.icon className="h-4 w-4 mx-auto mb-1.5 text-white/70" />
-                  <p className="text-base font-bold text-white">{stat.value}{stat.suffix}</p>
-                  <p className="text-[10px] text-white/50 font-semibold uppercase tracking-wider mt-0.5">{stat.label}</p>
-                </motion.div>
-              ))}
-            </div>
-
-            <div className="mt-5">
-              <div className="flex justify-between text-[10px] text-white/50 font-medium mb-1.5">
-                <span>Recovery Progress</span>
-                <span>{recoveryScore}%</span>
+              {/* Stats row */}
+              <div className="grid grid-cols-3 gap-2.5">
+                {[
+                  { icon: Flame, value: `${streak.days}`, label: 'Streak', suffix: 'd' },
+                  { icon: TrendingUp, value: `${recoveryScore}`, label: 'Recovery', suffix: '%' },
+                  { icon: Calendar, value: streak.startDate ? new Date(streak.startDate).toLocaleDateString(undefined, { day: 'numeric', month: 'short' }) : '—', label: 'Started', suffix: '' },
+                ].map((stat, i) => (
+                  <motion.div
+                    key={stat.label}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.35 + i * 0.08 }}
+                    className="group rounded-2xl bg-white/[0.08] backdrop-blur-md px-3 py-3.5 text-center border border-white/[0.12] hover:bg-white/[0.14] transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
+                  >
+                    <stat.icon className="h-4 w-4 mx-auto mb-2 text-white/60 group-hover:text-white/80 transition-colors" />
+                    <p className="text-[15px] font-bold text-white leading-none">{stat.value}{stat.suffix}</p>
+                    <p className="text-[9px] text-white/40 font-bold uppercase tracking-[0.12em] mt-1.5">{stat.label}</p>
+                  </motion.div>
+                ))}
               </div>
-              <div className="h-2 rounded-full bg-white/15 overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${recoveryScore}%` }}
-                  transition={{ duration: 1.4, delay: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  className="h-full rounded-full bg-white/80 shadow-sm"
-                />
+
+              {/* Progress bar */}
+              <div className="mt-6">
+                <div className="flex justify-between text-[10px] font-semibold mb-2">
+                  <span className="text-white/45 tracking-wide">Recovery Progress</span>
+                  <span className="text-white/70">{recoveryScore}%</span>
+                </div>
+                <div className="h-2.5 rounded-full bg-white/[0.1] overflow-hidden shadow-[inset_0_1px_2px_rgba(0,0,0,0.15)]">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${recoveryScore}%` }}
+                    transition={{ duration: 1.4, delay: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    className="h-full rounded-full bg-gradient-to-r from-white/60 via-white/80 to-white/90 shadow-[0_0_12px_rgba(255,255,255,0.3)]"
+                  />
+                </div>
               </div>
             </div>
           </div>
