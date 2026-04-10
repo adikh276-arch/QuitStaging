@@ -13,13 +13,17 @@ export function getEntryKey(substance: string, tracker: string, date: string) {
  */
 const syncToNeon = async (id: string, data: any) => {
   const userId = getUserId();
-  if (userId === 'anon') return;
+  if (userId === 'anon') {
+    console.warn(`[Sync] Skipping sync for ${id} - user is anon`);
+    return;
+  }
   
   try {
+    console.log(`[Sync] Syncing ${id} for user ${userId}...`);
     await executeQuery(`
       INSERT INTO quit.activities (id, user_id, data)
       VALUES ($1, $2, $3)
-      ON CONFLICT (id) DO UPDATE SET data = $3
+      ON CONFLICT (id, user_id) DO UPDATE SET data = $3
     `, [id, userId, JSON.stringify(data)]);
   } catch (err) {
     console.error(`[Sync] Failed to sync ${id} to Neon:`, err);
@@ -30,9 +34,12 @@ const syncToNeon = async (id: string, data: any) => {
  * Save onboarded state locally AND to Neon (cross-device persistence)
  */
 export async function saveOnboarded(substance: string, meta: { motivation?: string; triggers?: string[] }) {
-  const key = `${getPrefix()}_onboarded_${substance}`;
-  localStorage.setItem(key, 'true');
-  await syncToNeon(key, { onboarded: true, ...meta, substance });
+  const localKey = `${getPrefix()}_onboarded_${substance}`;
+  localStorage.setItem(localKey, 'true');
+  
+  // Use a stable ID for the DB that doesn't include the prefix (user_id column handles that)
+  const dbId = `onboarded_${substance}`;
+  await syncToNeon(dbId, { onboarded: true, ...meta, substance });
 }
 
 /**
@@ -48,9 +55,10 @@ export async function fetchOnboarded(substance: string): Promise<boolean> {
   // 2. Check Neon DB (cross-device)
   if (userId === 'anon') return false;
   try {
+    const dbId = `onboarded_${substance}`;
     const result = await executeQuery(
-      `SELECT data FROM quit.activities WHERE user_id = $1 AND id LIKE $2 LIMIT 1`,
-      [userId, `%_onboarded_${substance}`]
+      `SELECT data FROM quit.activities WHERE user_id = $1 AND id = $2 LIMIT 1`,
+      [userId, dbId]
     );
     if (result.rows.length > 0) {
       const data = result.rows[0].data;
