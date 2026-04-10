@@ -16,12 +16,9 @@ export const executeQuery = async (query: string, params: any[] = []) => {
     return { rows: [] };
   }
 
-  const schema = "quit";
-  
-  // Basic regex for common SQL patterns to inject schema
-  // Skip if table already has a schema prefix (e.g. core.users or quit.activities)
-  const rewrittenQuery = query
-    .replace(/(FROM|JOIN|UPDATE|INSERT INTO|INTO)\s+((?!core\.|quit\.)\w+)/gi, `$1 ${schema}.$2`);
+  // For production stability, we use explicit schema names (quit. or core.) in queries 
+  // rather than a smart rewriter that might cause syntax errors.
+  const rewrittenQuery = query;
 
   // Transform $1, $2 params to Neon expected format if necessary
   // Neon's 'neon' client handles standard postgres interpolation: sql(query, params)
