@@ -162,11 +162,22 @@ const CalculatorView = ({ substance }: { substance: SubstanceConfig }) => {
         {results.map((r, i) => (
           <div key={i} className="flex justify-between rounded-lg border border-border bg-card p-3">
             <span className="text-xs text-muted-foreground">{t(`quit.substances.${substance.slug}.calculator.results.${i}.label`, r.label)}</span>
-            <span className={`text-sm font-semibold ${r.color === 'destructive' ? 'text-destructive' : r.color === 'accent' ? 'text-accent' : 'text-foreground'}`}>{r.value}</span>
+            <span className={`text-sm font-semibold ${r.color === 'destructive' ? 'text-destructive' : r.color === 'accent' ? 'text-accent' : 'text-foreground'}`}>
+              {/* Check if value matches common translatable patterns */}
+              {r.value.includes('units/week') ? t('quit.app.units_per_week', { count: r.value.split(' ')[0] }) :
+               r.value.includes('units') ? t('quit.app.units_count', { count: r.value.split(' ')[0] }) :
+               r.value.includes('mg/week') ? t('quit.app.mg_per_week', { count: r.value.split(' ')[0] }) :
+               r.value.includes('mg') ? t('quit.app.mg_count', { count: r.value.split(' ')[0] }) :
+               t(`quit.app.status.${r.value.toLowerCase().replace(/ /g, '_')}`, r.value)}
+            </span>
           </div>
         ))}
       </div>
-      {calc.note && <p className="mt-4 rounded-lg bg-primary/5 p-3 text-xs text-foreground">{calc.note}</p>}
+      {calc.note && (
+        <p className="mt-4 rounded-lg bg-primary/5 p-3 text-xs text-foreground leading-relaxed">
+          {t(`quit.substances.${substance.slug}.calculator.note`, calc.note)}
+        </p>
+      )}
     </div>
   );
 };
