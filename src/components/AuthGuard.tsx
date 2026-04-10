@@ -36,8 +36,15 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
               // 4. Remove token from URL
               urlParams.delete("token");
               const newSearch = urlParams.toString();
-              const newPath = window.location.pathname + (newSearch ? `?${newSearch}` : "");
-              window.history.replaceState({}, "", newPath);
+              
+              const savedPath = sessionStorage.getItem("redirect_path");
+              const targetPath = savedPath || location.pathname;
+              if (savedPath) {
+                sessionStorage.removeItem("redirect_path");
+              }
+
+              const newPath = targetPath + (newSearch ? `?${newSearch}` : "");
+              navigate(newPath, { replace: true });
               return;
             }
           }
@@ -53,7 +60,7 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
         // Not authenticated
         const currentUrl = window.location.href;
         sessionStorage.setItem("redirect_path", location.pathname + location.search);
-        window.location.href = `https://web.mantracare.com/app/therapy?redirect_url=${encodeURIComponent(currentUrl)}`;
+        window.location.href = `https://web.mantracare.com/app/quit?redirect_url=${encodeURIComponent(currentUrl)}`;
       }
     };
 
