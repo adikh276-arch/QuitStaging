@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ClipboardList, Calculator, Dumbbell, BookOpen, TrendingUp, Calendar, Flame, ChevronRight, Zap, Lightbulb, RefreshCw } from 'lucide-react';
 import { getSubstance } from '@/data/substances';
-import { getStreak, getEntries, getPrefix, fetchOnboarded, saveOnboarded, resetOnboarded } from '@/data/storage';
+import { getStreak, getEntries, getPrefix, fetchOnboarded, saveOnboarded, resetOnboarded, syncUserDataFromCloud } from '@/data/storage';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import TrackerDetail from '@/components/TrackerDetail';
@@ -64,8 +64,20 @@ const SubstancePage = () => {
 
   // Cloud check: runs once on mount, resolves onboarding state across devices
   useEffect(() => {
-    if (!slug || onboarded === true) return;
-    fetchOnboarded(slug).then(result => setOnboarded(result));
+    if (!slug) return;
+    
+    const resolveCloudData = async () => {
+      const isStillOnboarded = await fetchOnboarded(slug);
+      setOnboarded(isStillOnboarded);
+      
+      if (isStillOnboarded) {
+        // If onboarded, immediately pull all other tracker/streak data
+        await syncUserDataFromCloud(slug);
+        setLastUpdate(Date.now()); // Force re-render with cloud data
+      }
+    };
+
+    resolveCloudData();
   }, [slug]);
 
   if (!substance) {

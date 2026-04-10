@@ -69,8 +69,6 @@ export async function fetchOnboarded(substance: string): Promise<boolean> {
         console.log(`[Onboarding] Cloud record found for ${substance}. Restoring...`);
         // Cache locally so future checks are fast
         localStorage.setItem(localKey, 'true');
-        if (parsed.motivation) localStorage.setItem(`${getPrefix()}_motivation_${substance}`, parsed.motivation);
-        if (parsed.triggers) localStorage.setItem(`${getPrefix()}_triggers_${substance}`, JSON.stringify(parsed.triggers));
         return true;
       }
     }
@@ -78,6 +76,31 @@ export async function fetchOnboarded(substance: string): Promise<boolean> {
     console.error('[Onboarding] Failed to fetch from Neon:', err);
   }
   return false;
+}
+
+/**
+ * Sync ALL user data for a substance from Neon to LocalStorage
+ */
+export async function syncUserDataFromCloud(substance: string) {
+  const userId = getUserId();
+  if (userId === 'anon') return;
+  
+  try {
+    console.log(`[Sync] Pulling all cloud data for ${substance}...`);
+    const result = await executeQuery(
+      `SELECT id, data FROM quit.activities WHERE user_id = $1 AND id LIKE $2`,
+      [userId, `quitmantra_${userId}_%_${substance}%`]
+    );
+    
+    result.rows.forEach(row => {
+      const { id, data } = row;
+      const dataStr = typeof data === 'string' ? data : JSON.stringify(data);
+      localStorage.setItem(id, dataStr);
+    });
+    console.log(`[Sync] Pulled ${result.rows.length} records from cloud.`);
+  } catch (err) {
+    console.error('[Sync] Failed to pull from Neon:', err);
+  }
 }
 
 /**
