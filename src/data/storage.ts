@@ -37,8 +37,9 @@ export async function saveOnboarded(substance: string, meta: { motivation?: stri
   const localKey = `${getPrefix()}_onboarded_${substance}`;
   localStorage.setItem(localKey, 'true');
   
-  // Use a stable ID for the DB that doesn't include the prefix (user_id column handles that)
-  const dbId = `onboarded_${substance}`;
+  // Save with prefix to DB to ensure uniqueness if DB PK is just 'id'
+  const dbId = `${getPrefix()}_onboarded_${substance}`;
+  console.log(`[Onboarding] Saving to cloud with ID: ${dbId}`);
   await syncToNeon(dbId, { onboarded: true, ...meta, substance });
 }
 
@@ -55,10 +56,11 @@ export async function fetchOnboarded(substance: string): Promise<boolean> {
   // 2. Check Neon DB (cross-device)
   if (userId === 'anon') return false;
   try {
-    const dbId = `onboarded_${substance}`;
+    console.log(`[Onboarding] Checking cloud for user ${userId}, substance ${substance}...`);
+    // Use LIKE to find any onboarding entry for this substance/user
     const result = await executeQuery(
-      `SELECT data FROM quit.activities WHERE user_id = $1 AND id = $2 LIMIT 1`,
-      [userId, dbId]
+      `SELECT data FROM quit.activities WHERE user_id = $1 AND id LIKE $2 LIMIT 1`,
+      [userId, `%_onboarded_${substance}`]
     );
     if (result.rows.length > 0) {
       const data = result.rows[0].data;
