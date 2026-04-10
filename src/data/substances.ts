@@ -148,10 +148,10 @@ export const substances: SubstanceConfig[] = [
         return [
           { label: 'Weekly units', value: `${weekly} units`, color: weekly > 14 ? 'destructive' : 'primary' },
           { label: 'Safe limit', value: '14 units/week' },
-          { label: 'Monthly spend', value: `${Math.round(monthly).toLocaleString}` },
-          { label: 'Yearly spend', value: `${Math.round(yearly).toLocaleString}` },
+          { label: 'Monthly spend', value: `${Math.round(monthly).toLocaleString()}` },
+          { label: 'Yearly spend', value: `${Math.round(yearly).toLocaleString()}` },
           { label: 'Liver risk', value: weekly > 35 ? 'High' : weekly > 14 ? 'Moderate' : 'Low', color: weekly > 35 ? 'destructive' : weekly > 14 ? 'accent' : 'primary' },
-          { label: '1-year savings if quit', value: `${Math.round(yearly).toLocaleString}` },
+          { label: '1-year savings if quit', value: `${Math.round(yearly).toLocaleString()}` },
         ];
       },
       note: "Your liver begins regenerating within 72 hours of stopping.",
@@ -305,8 +305,8 @@ export const substances: SubstanceConfig[] = [
         const total = yearly * inputs.yearsSmoked;
         return [
           { label: 'Daily spend', value: `${Math.round(daily)}` },
-          { label: 'Yearly spend', value: `${Math.round(yearly).toLocaleString}` },
-          { label: 'Total spent', value: `${Math.round(total).toLocaleString}` },
+          { label: 'Yearly spend', value: `${Math.round(yearly).toLocaleString()}` },
+          { label: 'Total spent', value: `${Math.round(total).toLocaleString()}` },
           { label: 'Carcinogens per cigarette', value: '69 known' },
           { label: '10-year benefit', value: '72% lower lung cancer risk' },
         ];
@@ -540,9 +540,9 @@ export const substances: SubstanceConfig[] = [
       compute: (inputs) => {
         const weekly = inputs.gramsPerWeek * inputs.costPerGram;
         return [
-          { label: 'Weekly spend', value: `${weekly.toLocaleString}` },
-          { label: 'Monthly spend', value: `${Math.round(weekly * 4.3).toLocaleString}` },
-          { label: 'Yearly spend', value: `${Math.round(weekly * 52).toLocaleString}` },
+          { label: 'Weekly spend', value: `${weekly.toLocaleString()}` },
+          { label: 'Monthly spend', value: `${Math.round(weekly * 4.3).toLocaleString()}` },
+          { label: 'Yearly spend', value: `${Math.round(weekly * 52).toLocaleString()}` },
           { label: 'THC clearance', value: 'Heavy users: 30-90 days' },
           { label: 'Cognitive recovery', value: '2-4 weeks for most functions' },
         ];
@@ -637,8 +637,8 @@ export const substances: SubstanceConfig[] = [
       compute: (inputs) => {
         const weekly = inputs.gramsPerUse * inputs.timesPerWeek * inputs.costPerGram;
         return [
-          { label: 'Weekly spend', value: `${Math.round(weekly).toLocaleString}` },
-          { label: 'Yearly spend', value: `${Math.round(weekly * 52).toLocaleString}` },
+          { label: 'Weekly spend', value: `${Math.round(weekly).toLocaleString()}` },
+          { label: 'Yearly spend', value: `${Math.round(weekly * 52).toLocaleString()}` },
           { label: 'Cardiovascular risk', value: 'Cocaine triples heart attack risk for 60 min after each use', color: 'destructive' },
           { label: 'Heart rate recovery', value: '↓ ~40 BPM within 21 days' },
         ];
@@ -837,8 +837,8 @@ export const substances: SubstanceConfig[] = [
         const daily = (inputs.gramsPerDay / 1000) * inputs.costPerKg;
         return [
           { label: 'Daily cost', value: `${Math.round(daily)}` },
-          { label: 'Monthly cost', value: `${Math.round(daily * 30).toLocaleString}` },
-          { label: 'Yearly cost', value: `${Math.round(daily * 365).toLocaleString}` },
+          { label: 'Monthly cost', value: `${Math.round(daily * 30).toLocaleString()}` },
+          { label: 'Yearly cost', value: `${Math.round(daily * 365).toLocaleString()}` },
           { label: 'Opioid receptor binding', value: 'Mitragynine binds mu-opioid receptors' },
         ];
       },

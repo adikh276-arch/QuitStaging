@@ -131,7 +131,7 @@ const Assessment = ({ substance }: { substance: SubstanceConfig }) => {
           disabled={selected === null}
           className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity disabled:opacity-40"
         >
-          {step < 10 ? t('quit.app.next') : t('quit.app.see_results')}
+          {step < 10 ? (t('quit.app.next', 'Next')) : (t('quit.app.see_results', 'See Results'))}
         </button>
       </div>
     </div>
@@ -160,7 +160,7 @@ const CalculatorView = ({ substance }: { substance: SubstanceConfig }) => {
       <div className="mt-6 space-y-2">
         {results.map((r, i) => (
           <div key={i} className="flex justify-between rounded-lg border border-border bg-card p-3">
-            <span className="text-xs text-muted-foreground">{t(`quit.substances.${substance.slug}.calculator.results.${i}.label`)}</span>
+            <span className="text-xs text-muted-foreground">{t(`quit.substances.${substance.slug}.calculator.results.${i}.label`, r.label)}</span>
             <span className={`text-sm font-semibold ${r.color === 'destructive' ? 'text-destructive' : r.color === 'accent' ? 'text-accent' : 'text-foreground'}`}>{r.value}</span>
           </div>
         ))}
@@ -177,7 +177,7 @@ const ActivitiesView = ({ substance }: { substance: SubstanceConfig }) => {
   const activeActivity = substance.activities.find(a => a.id === active);
 
   if (activeActivity) {
-    return <ActivityRunner activity={activeActivity} onBack={() => setActive(null)} />;
+    return <ActivityRunner activity={activeActivity} substance={substance} onBack={() => setActive(null)} />;
   }
 
   return (
@@ -198,7 +198,8 @@ const ActivitiesView = ({ substance }: { substance: SubstanceConfig }) => {
   );
 };
 
-const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => void }) => {
+const ActivityRunner = ({ activity, substance, onBack }: { activity: any; substance: SubstanceConfig; onBack: () => void }) => {
+  const { t } = useTranslation();
   const [checkedItems, setCheckedItems] = useState<Set<number>>(new Set());
   const [seconds, setSeconds] = useState(0);
   const [running, setRunning] = useState(false);
@@ -247,7 +248,7 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
 
   const currentPhase = activity.phases ? [...activity.phases].reverse().find((p: any) => seconds >= p.time) : null;
 
-  const backBtn = <button onClick={onBack} className="mb-4 text-xs text-muted-foreground hover:text-foreground transition-colors">← Back</button>;
+  const backBtn = <button onClick={onBack} className="mb-4 text-xs text-muted-foreground hover:text-foreground transition-colors">← {t('quit.app.back', 'Back')}</button>;
 
   // ===== QUIZ =====
   if (activity.type === 'quiz' && activity.questions) {
@@ -263,10 +264,10 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
               <span className="text-4xl font-bold text-primary">{totalCorrect}/{activity.questions.length}</span>
             </div>
             <p className="mt-4 text-sm text-muted-foreground">
-              {totalCorrect === activity.questions.length ? '🎉 Perfect! You really know your stuff.' : totalCorrect > activity.questions.length / 2 ? '💪 Great knowledge! Review the ones you missed.' : '📚 Good effort — learning is part of recovery.'}
+              {totalCorrect === activity.questions.length ? t('quit.app.activities.quiz.perfect', 'Perfect! You really know your stuff.') : totalCorrect > activity.questions.length / 2 ? t('quit.app.activities.quiz.good', 'Great knowledge! Review the ones you missed.') : t('quit.app.activities.quiz.learn', 'Good effort — learning is part of recovery.')}
             </p>
           </motion.div>
-          <button onClick={() => { setQuizIndex(0); setQuizAnswers([]); setQuizRevealed(false); }} className="rounded-xl bg-muted px-6 py-2 text-sm font-medium">Retake</button>
+          <button onClick={() => { setQuizIndex(0); setQuizAnswers([]); setQuizRevealed(false); }} className="rounded-xl bg-muted px-6 py-2 text-sm font-medium">{t('quit.app.retake', 'Retake')}</button>
         </div>
       );
     }
@@ -274,8 +275,10 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
       <div>
         {backBtn}
         <div className="mb-4 h-2 rounded-full bg-muted"><div className="h-2 rounded-full bg-primary transition-all" style={{ width: `${((quizIndex + 1) / activity.questions.length) * 100}%` }} /></div>
-        <p className="mb-1 text-xs text-muted-foreground">Question {quizIndex + 1} of {activity.questions.length}</p>
-        <motion.p key={quizIndex} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="mb-6 text-base font-semibold text-foreground">{q.question}</motion.p>
+        <p className="mb-1 text-xs text-muted-foreground">{t('quit.app.question_x_of_y', { current: quizIndex + 1, total: activity.questions.length })}</p>
+        <motion.p key={quizIndex} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="mb-6 text-base font-semibold text-foreground">
+          {t(`quit.substances.${substance.slug}.activities.${activity.id}.questions.${quizIndex}.question`, q.question)}
+        </motion.p>
         <div className="space-y-2">
           {q.options.map((opt: string, i: number) => {
             const selected = quizAnswers[quizIndex] === i;
@@ -284,16 +287,18 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
             return (
               <button key={i} disabled={revealed} onClick={() => { setQuizAnswers(prev => { const n = [...prev]; n[quizIndex] = i; return n; }); setQuizRevealed(true); }}
                 className={`w-full rounded-xl border-2 p-3.5 text-left text-sm font-medium transition-all ${revealed ? (isCorrect ? 'border-primary bg-primary/10 text-primary' : selected ? 'border-destructive bg-destructive/10 text-destructive' : 'border-border text-muted-foreground') : 'border-border hover:border-primary/50 text-foreground'}`}>
-                <span className="mr-2 font-bold text-muted-foreground">{String.fromCharCode(65 + i)}.</span> {opt}
+                <span className="mr-2 font-bold text-muted-foreground">{String.fromCharCode(65 + i)}.</span> {t(`quit.substances.${substance.slug}.activities.${activity.id}.questions.${quizIndex}.options.${i}`, opt)}
               </button>
             );
           })}
         </div>
         {quizRevealed && (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-4">
-            <p className="text-xs text-muted-foreground leading-relaxed rounded-lg bg-muted p-3">{q.explanation}</p>
+            <p className="text-xs text-muted-foreground leading-relaxed rounded-lg bg-muted p-3">
+              {t(`quit.substances.${substance.slug}.activities.${activity.id}.questions.${quizIndex}.explanation`, q.explanation)}
+            </p>
             <button onClick={() => { setQuizIndex(quizIndex + 1); setQuizRevealed(false); }} className="mt-3 rounded-xl bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground">
-              {quizIndex < activity.questions.length - 1 ? 'Next' : 'See Results'}
+              {quizIndex < activity.questions.length - 1 ? t('quit.app.next', 'Next') : t('quit.app.see_results', 'See Results')}
             </button>
           </motion.div>
         )}
@@ -315,7 +320,9 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
             <span className="text-6xl">{scene?.emoji || '🌟'}</span>
           </motion.div>
           <motion.p key={scene?.text} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-            className="mt-8 text-sm text-foreground leading-relaxed max-w-xs mx-auto">{scene?.text}</motion.p>
+            className="mt-8 text-sm text-foreground leading-relaxed max-w-xs mx-auto">
+            {t(`quit.substances.${substance.slug}.activities.${activity.id}.scenes.${vizIndex}.text`, scene?.text)}
+          </motion.p>
         </motion.div>
         <div className="flex items-center justify-center gap-2 mb-4">
           {activity.scenes.map((_: any, i: number) => (
@@ -324,7 +331,7 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
         </div>
         <button onClick={() => { if (!running) { setRunning(true); setVizIndex(0); } else { setRunning(false); } }}
           className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground">
-          {running ? <><Pause className="h-4 w-4" /> Pause</> : <><Play className="h-4 w-4" /> {vizIndex > 0 ? 'Continue' : 'Begin Journey'}</>}
+          {running ? <><Pause className="h-4 w-4" /> {t('quit.app.pause', 'Pause')}</> : <><Play className="h-4 w-4" /> {vizIndex > 0 ? t('quit.app.continue', 'Continue') : t('quit.app.begin_journey', 'Begin Journey')}</>}
         </button>
       </div>
     );
@@ -340,9 +347,9 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
           {backBtn}
           <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring' }}>
             <div className="text-6xl mb-4">🏆</div>
-            <h2 className="font-display text-2xl text-foreground mb-2">Craving Crushed!</h2>
-            <p className="text-sm text-muted-foreground">You tapped {taps} times. The craving lost. You won.</p>
-            <button onClick={() => { setTaps(0); setTapDone(false); }} className="mt-6 rounded-xl bg-muted px-6 py-2 text-sm font-medium">Go Again</button>
+            <h2 className="font-display text-2xl text-foreground mb-2">{t('quit.app.activities.tap.success', 'Craving Crushed!')}</h2>
+            <p className="text-sm text-muted-foreground">{t('quit.app.activities.tap.success_desc', { count: taps })}</p>
+            <button onClick={() => { setTaps(0); setTapDone(false); }} className="mt-6 rounded-xl bg-muted px-6 py-2 text-sm font-medium">{t('quit.app.activities.tap.again', 'Go Again')}</button>
           </motion.div>
         </div>
       );
@@ -367,7 +374,7 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
           className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-primary shadow-lg active:shadow-sm transition-shadow">
           <span className="text-3xl text-primary-foreground">👊</span>
         </motion.button>
-        <p className="mt-3 text-xs text-muted-foreground">{goal - taps} taps to go</p>
+        <p className="mt-3 text-xs text-muted-foreground">{t('quit.app.activities.tap.remaining', { count: goal - taps })}</p>
       </div>
     );
   }
@@ -385,20 +392,22 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
             transition={{ duration: 0.4 }}
             className="mx-auto max-w-sm rounded-2xl border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5 p-8 shadow-lg min-h-[180px] flex flex-col items-center justify-center">
             <span className="text-4xl mb-4">{affSaved.has(affIndex) ? '💛' : '✨'}</span>
-            <p className="text-lg font-semibold text-foreground leading-relaxed italic">"{aff}"</p>
+            <p className="text-lg font-semibold text-foreground leading-relaxed italic">
+              "{t(`quit.substances.${substance.slug}.activities.${activity.id}.affirmations.${affIndex}`, aff)}"
+            </p>
           </motion.div>
         </AnimatePresence>
         <div className="flex items-center justify-center gap-4 mt-8">
           <button disabled={affIndex === 0} onClick={() => setAffIndex(affIndex - 1)}
-            className="rounded-full bg-muted px-4 py-2 text-sm font-medium disabled:opacity-30">← Prev</button>
+            className="rounded-full bg-muted px-4 py-2 text-sm font-medium disabled:opacity-30">← {t('quit.app.prev', 'Prev')}</button>
           <button onClick={() => setAffSaved(prev => { const n = new Set(prev); if (n.has(affIndex)) n.delete(affIndex); else n.add(affIndex); return n; })}
             className={`rounded-full px-4 py-2 text-sm font-medium ${affSaved.has(affIndex) ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-            {affSaved.has(affIndex) ? '💛 Saved' : '🤍 Save'}
+            {affSaved.has(affIndex) ? `💛 ${t('quit.app.activities.affirmation.saved', 'Saved')}` : `🤍 ${t('quit.app.activities.affirmation.save', 'Save')}`}
           </button>
           <button disabled={affIndex >= activity.affirmations.length - 1} onClick={() => setAffIndex(affIndex + 1)}
-            className="rounded-full bg-muted px-4 py-2 text-sm font-medium disabled:opacity-30">Next →</button>
+            className="rounded-full bg-muted px-4 py-2 text-sm font-medium disabled:opacity-30">{t('quit.app.next', 'Next')} →</button>
         </div>
-        <p className="mt-4 text-[10px] text-muted-foreground">{affIndex + 1} / {activity.affirmations.length} · {affSaved.size} saved</p>
+        <p className="mt-4 text-[10px] text-muted-foreground">{t('quit.app.affirmation_x_of_y', { current: affIndex + 1, total: activity.affirmations.length })} · {affSaved.size} {t('quit.app.saved', 'saved')}</p>
       </div>
     );
   }
@@ -411,9 +420,9 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
           {backBtn}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div className="text-5xl mb-4">🧘</div>
-            <h2 className="font-display text-xl text-foreground mb-2">Scan Complete</h2>
-            <p className="text-sm text-muted-foreground mb-6">You checked in with {activity.bodyZones.length} areas. Awareness is the first step to healing.</p>
-            <button onClick={() => { setBodyIndex(-1); setBodyDone(false); }} className="rounded-xl bg-muted px-6 py-2 text-sm font-medium">Repeat</button>
+            <h2 className="font-display text-xl text-foreground mb-2">{t('quit.app.activities.bodyscan.complete', 'Scan Complete')}</h2>
+            <p className="text-sm text-muted-foreground mb-6">{t('quit.app.activities.bodyscan.complete_desc', { count: activity.bodyZones.length })}</p>
+            <button onClick={() => { setBodyIndex(-1); setBodyDone(false); }} className="rounded-xl bg-muted px-6 py-2 text-sm font-medium">{t('quit.app.activities.repeat', 'Repeat')}</button>
           </motion.div>
         </div>
       );
@@ -428,12 +437,14 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
             {activity.bodyZones.map((zone: any, i: number) => (
               <div key={i} className="rounded-xl border border-border bg-card p-4 text-center">
                 <span className="text-2xl">{zone.emoji}</span>
-                <p className="text-xs font-medium text-foreground mt-1">{zone.name}</p>
+                <p className="text-xs font-medium text-foreground mt-1">
+                  {t(`quit.substances.${substance.slug}.activities.${activity.id}.bodyZones.${i}.name`, zone.name)}
+                </p>
               </div>
             ))}
           </div>
           <button onClick={() => setBodyIndex(0)} className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground">
-            Begin Body Scan
+            {t('quit.app.activities.bodyscan.begin', 'Begin Body Scan')}
           </button>
         </div>
       );
@@ -443,18 +454,22 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
       <div className="text-center">
         {backBtn}
         <div className="mb-4 h-2 rounded-full bg-muted"><div className="h-2 rounded-full bg-primary transition-all" style={{ width: `${((bodyIndex + 1) / activity.bodyZones.length) * 100}%` }} /></div>
-        <p className="text-xs text-muted-foreground mb-6">Zone {bodyIndex + 1} of {activity.bodyZones.length}</p>
+        <p className="text-xs text-muted-foreground mb-6">{t('quit.app.activities.bodyscan.zone_x_of_y', { current: bodyIndex + 1, total: activity.bodyZones.length })}</p>
         <motion.div key={bodyIndex} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <motion.div animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 3, repeat: Infinity }}
             className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-primary/10 mb-6">
             <span className="text-5xl">{zone.emoji}</span>
           </motion.div>
-          <h3 className="font-display text-lg text-foreground mb-3">{zone.name}</h3>
-          <p className="text-sm text-foreground leading-relaxed max-w-xs mx-auto mb-8">{zone.prompt}</p>
+          <h3 className="font-display text-lg text-foreground mb-3">
+            {t(`quit.substances.${substance.slug}.activities.${activity.id}.bodyZones.${bodyIndex}.name`, zone.name)}
+          </h3>
+          <p className="text-sm text-foreground leading-relaxed max-w-xs mx-auto mb-8">
+            {t(`quit.substances.${substance.slug}.activities.${activity.id}.bodyZones.${bodyIndex}.prompt`, zone.prompt)}
+          </p>
         </motion.div>
         <button onClick={() => { if (bodyIndex < activity.bodyZones.length - 1) setBodyIndex(bodyIndex + 1); else setBodyDone(true); }}
           className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground">
-          {bodyIndex < activity.bodyZones.length - 1 ? 'Next Zone →' : 'Complete ✓'}
+          {bodyIndex < activity.bodyZones.length - 1 ? `${t('quit.app.activities.bodyscan.next_zone', 'Next Zone')} →` : `${t('quit.app.activities.complete', 'Complete')} ✓`}
         </button>
       </div>
     );
@@ -473,24 +488,26 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
           {activity.sortItems.map((item: any, i: number) => (
             <motion.div key={i} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
               className={`rounded-xl border-2 p-3.5 transition-all ${sortRevealed ? (sortAnswers[i] === item.correct ? 'border-primary bg-primary/5' : 'border-destructive bg-destructive/5') : 'border-border'}`}>
-              <p className="text-sm font-medium text-foreground mb-2">{item.text}</p>
+              <p className="text-sm font-medium text-foreground mb-2">
+                {t(`quit.substances.${substance.slug}.activities.${activity.id}.sortItems.${i}.text`, item.text)}
+              </p>
               <div className="flex gap-2 flex-wrap">
                 {activity.sortCategories.map((cat: string) => (
-                  <button key={cat} disabled={sortRevealed}
-                    onClick={() => setSortAnswers(prev => ({ ...prev, [i]: cat }))}
-                    className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${sortAnswers[i] === cat ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}`}>
-                    {cat}
-                  </button>
+                    <button key={cat} disabled={revealed}
+                      onClick={() => setSortAnswers(prev => ({ ...prev, [i]: cat }))}
+                      className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${sortAnswers[i] === cat ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}`}>
+                      {t(`quit.substances.${substance.slug}.activities.${activity.id}.sortCategories.${activity.sortCategories.indexOf(cat)}`, cat)}
+                    </button>
                 ))}
               </div>
               {sortRevealed && sortAnswers[i] !== item.correct && (
-                <p className="mt-1 text-[10px] text-muted-foreground">Correct: {item.correct}</p>
+                <p className="mt-1 text-[10px] text-muted-foreground">{t('quit.app.correct', 'Correct')}: {t(`quit.substances.${substance.slug}.activities.${activity.id}.sortCategories.${activity.sortCategories.indexOf(item.correct)}`, item.correct)}</p>
               )}
             </motion.div>
           ))}
         </div>
         {allAnswered && !sortRevealed && (
-          <button onClick={() => setSortRevealed(true)} className="mt-4 w-full rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground">Check Answers</button>
+          <button onClick={() => setSortRevealed(true)} className="mt-4 w-full rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground">{t('quit.app.activities.sorting.check', 'Check Answers')}</button>
         )}
         {sortRevealed && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 rounded-xl bg-primary/10 p-4 text-center">
@@ -509,12 +526,13 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
         <h2 className="mb-2 font-display text-xl text-foreground">{activity.name}</h2>
         {activity.description && <p className="mb-6 text-xs text-muted-foreground">{activity.description}</p>}
         <div className="space-y-4">
-          {activity.fields?.map((field: any) => (
             <div key={field.key}>
-              <label className="text-xs font-medium text-foreground mb-1 block">{field.label}</label>
+              <label className="text-xs font-medium text-foreground mb-1 block">
+                {t(`quit.substances.${substance.slug}.activities.${activity.id}.fields.${field.key}.label`, field.label)}
+              </label>
               {field.type === 'textarea' ? (
                 <textarea value={journalValues[field.key] || ''} onChange={e => setJournalValues(prev => ({ ...prev, [field.key]: e.target.value }))}
-                  placeholder={field.placeholder} className="w-full rounded-xl border border-border bg-card p-3 text-sm text-foreground placeholder:text-muted-foreground min-h-[80px] resize-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all" />
+                  placeholder={t(`quit.substances.${substance.slug}.activities.${activity.id}.fields.${field.key}.placeholder`, field.placeholder)} className="w-full rounded-xl border border-border bg-card p-3 text-sm text-foreground placeholder:text-muted-foreground min-h-[80px] resize-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all" />
               ) : field.type === 'slider' ? (
                 <div>
                   <div className="flex justify-between text-xs mb-1"><span className="text-muted-foreground">{field.min}</span><span className="text-primary font-bold">{journalValues[field.key] ?? field.min}</span><span className="text-muted-foreground">{field.max}</span></div>
@@ -522,9 +540,11 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
                 </div>
               ) : field.type === 'chips' ? (
                 <div className="flex flex-wrap gap-2">
-                  {field.options?.map((opt: string) => (
+                  {field.options?.map((opt: string, k: number) => (
                     <button key={opt} onClick={() => setJournalValues(prev => ({ ...prev, [field.key]: opt }))}
-                      className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${journalValues[field.key] === opt ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>{opt}</button>
+                      className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${journalValues[field.key] === opt ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+                      {t(`quit.substances.${substance.slug}.activities.${activity.id}.fields.${field.key}.options.${k}`, opt)}
+                    </button>
                   ))}
                 </div>
               ) : null}
@@ -533,7 +553,7 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
         </div>
         {Object.keys(journalValues).length > 0 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-6 rounded-xl bg-primary/10 p-4 text-center">
-            <p className="text-sm font-semibold text-primary">📝 Reflection captured. Awareness is progress.</p>
+            <p className="text-sm font-semibold text-primary">📝 {t('quit.app.activities.journal.captured', 'Reflection captured. Awareness is progress.')}</p>
           </motion.div>
         )}
       </div>
@@ -555,19 +575,19 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
                 <div className={`flex h-5 w-5 items-center justify-center rounded-full border-2 ${checkedItems.has(i) ? 'border-primary bg-primary' : 'border-muted-foreground'}`}>
                   {checkedItems.has(i) && <Check className="h-3 w-3 text-primary-foreground" />}
                 </div>
-                <span className="text-sm font-medium text-foreground">{item.title}</span>
+                <span className="text-sm font-medium text-foreground">{t(`quit.substances.${substance.slug}.activities.${activity.id}.items.${i}.title`, item.title)}</span>
               </button>
               <AnimatePresence>
                 {checkedItems.has(i) && (
                   <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden">
-                    <p className="px-4 pb-4 text-xs text-muted-foreground leading-relaxed">{item.content}</p>
+                    <p className="px-4 pb-4 text-xs text-muted-foreground leading-relaxed">{t(`quit.substances.${substance.slug}.activities.${activity.id}.items.${i}.content`, item.content)}</p>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
           ))}
         </div>
-        {allDone && <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="mt-6 rounded-xl bg-primary/10 p-4 text-center"><p className="text-sm font-semibold text-primary">✨ Complete! Well done.</p></motion.div>}
+        {allDone && <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="mt-6 rounded-xl bg-primary/10 p-4 text-center"><p className="text-sm font-semibold text-primary">✨ {t('quit.app.activities.complete_well_done', 'Complete! Well done.')}</p></motion.div>}
       </div>
     );
   }
@@ -587,10 +607,10 @@ const ActivityRunner = ({ activity, onBack }: { activity: any; onBack: () => voi
       )}
       <p className="mb-4 text-4xl font-bold text-foreground font-body">{Math.floor(seconds / 60)}:{(seconds % 60).toString().padStart(2, '0')}</p>
       {currentPhase && (
-        <motion.p key={currentPhase.text} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6 text-sm text-foreground leading-relaxed">{currentPhase.text}</motion.p>
+        <motion.p key={currentPhase.text} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6 text-sm text-foreground leading-relaxed">{t(`quit.substances.${substance.slug}.activities.${activity.id}.phases.${activity.phases.indexOf(currentPhase)}.text`, currentPhase.text)}</motion.p>
       )}
       <button onClick={() => setRunning(!running)} className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground">
-        {running ? <><Pause className="h-4 w-4" /> Pause</> : <><Play className="h-4 w-4" /> {seconds > 0 ? 'Resume' : 'Start'}</>}
+        {running ? <><Pause className="h-4 w-4" /> {t('quit.app.pause', 'Pause')}</> : <><Play className="h-4 w-4" /> {seconds > 0 ? t('quit.app.resume', 'Resume') : t('quit.app.start', 'Start')}</>}
       </button>
     </div>
   );
@@ -606,7 +626,7 @@ const LearnView = ({ substance }: { substance: SubstanceConfig }) => {
     return (
       <div>
         <button onClick={() => setActive(null)} className="mb-4 text-xs text-muted-foreground">← {t('quit.app.back')}</button>
-        <span className="mb-2 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">{article.tag}</span>
+        <span className="mb-2 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">{t(`quit.substances.${substance.slug}.articles.${article.id}.tag`, article.tag)}</span>
         <h2 className="mb-4 font-display text-xl text-foreground">{t(`quit.substances.${substance.slug}.articles.${article.id}.title`)}</h2>
         <div className="text-sm text-foreground leading-relaxed whitespace-pre-line">{t(`quit.substances.${substance.slug}.articles.${article.id}.content`)}</div>
       </div>
@@ -620,7 +640,7 @@ const LearnView = ({ substance }: { substance: SubstanceConfig }) => {
         {substance.articles.map(art => (
           <button key={art.id} onClick={() => setActive(art.id)} className="flex w-full items-center justify-between rounded-xl border border-border bg-card p-4 text-left hover:shadow-md">
             <div className="flex-1">
-              <span className="mb-1 inline-block rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">{art.tag}</span>
+              <span className="mb-1 inline-block rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">{t(`quit.substances.${substance.slug}.articles.${art.id}.tag`, art.tag)}</span>
               <p className="text-sm font-semibold text-foreground">{t(`quit.substances.${substance.slug}.articles.${art.id}.title`)}</p>
             </div>
             <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
@@ -648,7 +668,7 @@ const CommunityView = ({ substance }: { substance: SubstanceConfig }) => {
   if (post) {
     return (
       <div>
-        <button onClick={() => setActivePost(null)} className="mb-4 text-xs text-muted-foreground">← Back</button>
+        <button onClick={() => setActivePost(null)} className="mb-4 text-xs text-muted-foreground">← {t('quit.app.back', 'Back')}</button>
         <span className="mb-2 inline-block rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">{post.type}</span>
         <h2 className="mb-2 font-display text-lg text-foreground">{post.title}</h2>
         <p className="text-xs text-muted-foreground mb-4">{post.username} · {post.timeAgo}</p>
@@ -689,7 +709,7 @@ const CommunityView = ({ substance }: { substance: SubstanceConfig }) => {
               <button onClick={e => { e.stopPropagation(); toggleCommunityUpvote(substance.slug, p.id); }} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary">
                 <ArrowUp className="h-3 w-3" /> {p.upvotes + (upvotes[p.id] ? 1 : 0)}
               </button>
-              <span className="text-xs text-muted-foreground">{p.comments} comments</span>
+              <span className="text-xs text-muted-foreground">{p.comments} {t('quit.app.community.comments', 'comments')}</span>
             </div>
           </button>
         ))}
@@ -727,7 +747,7 @@ const PostComposer = ({ substance, onClose }: { substance: SubstanceConfig; onCl
             <button key={t} onClick={() => setType(t)} className={`rounded-full px-3 py-1 text-xs font-medium ${type === t ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>{t}</button>
           ))}
         </div>
-        <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Title" className="mb-3 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm" />
+        <input value={title} onChange={e => setTitle(e.target.value)} placeholder={t('quit.app.community.title', 'Title')} className="mb-3 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm" />
         <textarea value={body} onChange={e => setBody(e.target.value)} placeholder={t('quit.app.share_thoughts')} className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm" rows={4} />
         <button onClick={handlePost} className="mt-4 w-full rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground">{t('quit.app.post')}</button>
       </div>
