@@ -12,29 +12,36 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
       const therapyUserId = localStorage.getItem("therapy_user_id");
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get("token");
+      const urlUserId = urlParams.get("userId") || urlParams.get("user_id");
 
-      if (token) {
+      if (token || urlUserId) {
         try {
-          // 2. Exchange token for real User ID via Mantra Care Primary API
-          const response = await fetch(`https://api.mantracare.com/user/user-info`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token })
-          });
+          // 1. If we have a userId in the URL, use it directly (it's the 4-6 digit ID)
+          let userId = urlUserId;
           
-          if (!response.ok) throw new Error(`Auth API failed: ${response.status}`);
+          // 2. Otherwise exchange token for real User ID via legacy handshake API
+          if (!userId && token) {
+             const response = await fetch(`https://api.mantracare.com/user/user-info`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token })
+             });
+             if (response.ok) {
+                const data = await response.json();
+                userId = data.user_id || data.id;
+             }
+          }
           
-          const data = await response.json();
-          const userId = data.user_id || data.id;
+          const finalId = userId || token; // Fallback to token if nothing else works
           
-          if (!userId) throw new Error('No user_id found in response');
-          
-          localStorage.setItem("therapy_user_id", userId);
+          localStorage.setItem("therapy_user_id", finalId);
           setIsAuthenticated(true);
-          initializeUser(userId); // Sync to Neon
+          initializeUser(finalId); // Sync to Neon
           
-          // 3. Remove token from URL and restore path
+          // 3. Remove auth params from URL
           urlParams.delete("token");
+          urlParams.delete("userId");
+          urlParams.delete("user_id");
           const newSearch = urlParams.toString();
           
           // 4. Restore the deep-link path
@@ -48,9 +55,10 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
           return;
         } catch (err) {
           console.error("Auth: handshake failed:", err);
-          localStorage.setItem("therapy_user_id", token);
+          const fallbackId = urlUserId || token;
+          localStorage.setItem("therapy_user_id", fallbackId);
           setIsAuthenticated(true);
-          initializeUser(token);
+          initializeUser(fallbackId);
         }
       }
 
