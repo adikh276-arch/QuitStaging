@@ -26,6 +26,47 @@ const syncToNeon = async (id: string, data: any) => {
   }
 };
 
+/**
+ * Save onboarded state locally AND to Neon (cross-device persistence)
+ */
+export async function saveOnboarded(substance: string, meta: { motivation?: string; triggers?: string[] }) {
+  const key = `${getPrefix()}_onboarded_${substance}`;
+  localStorage.setItem(key, 'true');
+  await syncToNeon(key, { onboarded: true, ...meta, substance });
+}
+
+/**
+ * Check onboarded state — local first, then Neon as fallback (avoids re-onboarding on new device)
+ */
+export async function fetchOnboarded(substance: string): Promise<boolean> {
+  const userId = getUserId();
+  
+  // 1. Check local cache first (fast path)
+  const localKey = `${getPrefix()}_onboarded_${substance}`;
+  if (localStorage.getItem(localKey) === 'true') return true;
+  
+  // 2. Check Neon DB (cross-device)
+  if (userId === 'anon') return false;
+  try {
+    const result = await executeQuery(
+      `SELECT data FROM quit.activities WHERE user_id = $1 AND id LIKE $2 LIMIT 1`,
+      [userId, `%_onboarded_${substance}`]
+    );
+    if (result.rows.length > 0) {
+      const data = result.rows[0].data;
+      const parsed = typeof data === 'string' ? JSON.parse(data) : data;
+      if (parsed?.onboarded === true) {
+        // Cache locally so future checks are fast
+        localStorage.setItem(localKey, 'true');
+        return true;
+      }
+    }
+  } catch (err) {
+    console.error('[Onboarding] Failed to fetch from Neon:', err);
+  }
+  return false;
+}
+
 export function saveEntry(substance: string, tracker: string, date: string, entry: TrackerEntry) {
   const key = getEntryKey(substance, tracker, date);
   localStorage.setItem(key, JSON.stringify(entry));

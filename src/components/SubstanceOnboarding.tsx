@@ -32,7 +32,7 @@ const motivations = ['Better health', 'Family & relationships', 'Financial freed
 
 interface Props {
   substance: SubstanceConfig;
-  onComplete: () => void;
+  onComplete: (motivation?: string, triggers?: string[]) => void;
 }
 
 const SubstanceOnboarding = ({ substance, onComplete }: Props) => {
@@ -67,7 +67,7 @@ const SubstanceOnboarding = ({ substance, onComplete }: Props) => {
     localStorage.setItem(`${getPrefix()}_onboarded_${substance.slug}`, 'true');
     localStorage.setItem(`${getPrefix()}_motivation_${substance.slug}`, motivation || '');
     localStorage.setItem(`${getPrefix()}_triggers_${substance.slug}`, JSON.stringify(triggers));
-    onComplete();
+    onComplete(motivation || undefined, triggers);
   };
 
   const canNext = () => {
@@ -160,7 +160,7 @@ const SubstanceOnboarding = ({ substance, onComplete }: Props) => {
                       <input
                         type="date"
                         value={customDate}
-                        max={new Date().toISOString().split('quit.T')[0]}
+                        max={new Date().toISOString().split('T')[0]}
                         onChange={e => setCustomDate(e.target.value)}
                         className="w-full rounded-2xl border-2 border-border/60 bg-background px-4 py-3.5 text-sm font-medium focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10"
                       />

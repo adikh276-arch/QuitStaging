@@ -2,8 +2,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ClipboardList, Calculator, Dumbbell, BookOpen, TrendingUp, Calendar, Flame, ChevronRight, Zap, Lightbulb } from 'lucide-react';
 import { getSubstance } from '@/data/substances';
-import { getStreak, getEntries, getPrefix } from '@/data/storage';
-import { useState } from 'react';
+import { getStreak, getEntries, getPrefix, fetchOnboarded, saveOnboarded } from '@/data/storage';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import TrackerDetail from '@/components/TrackerDetail';
 import ToolModal from '@/components/ToolModal';
@@ -47,22 +47,39 @@ const SubstancePage = () => {
   const [activeTracker, setActiveTracker] = useState<string | null>(null);
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [lastUpdate, setLastUpdate] = useState(Date.now());
-  const [onboarded, setOnboarded] = useState(() => {
+  // Start as null = loading. True/false = resolved
+  const [onboarded, setOnboarded] = useState<boolean | null>(() => {
     if (!slug) return false;
-    return localStorage.getItem(`${getPrefix()}_onboarded_${slug}`) === 'true';
+    // Quick local check to avoid flicker if already cached
+    return localStorage.getItem(`${getPrefix()}_onboarded_${slug}`) === 'true' ? true : null;
   });
+
+  // Cloud check: runs once on mount, resolves onboarding state across devices
+  useEffect(() => {
+    if (!slug || onboarded === true) return;
+    fetchOnboarded(slug).then(result => setOnboarded(result));
+  }, [slug]);
 
   if (!substance) {
     navigate('/');
     return null;
   }
 
+  // Still checking Neon DB — show spinner to prevent flash of onboarding
+  if (onboarded === null) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+      </div>
+    );
+  }
+
   if (!onboarded) {
     return (
       <SubstanceOnboarding
         substance={substance}
-        onComplete={() => {
-          localStorage.setItem(`${getPrefix()}_onboarded_${slug}`, 'true');
+        onComplete={async (motivation?: string, triggers?: string[]) => {
+          await saveOnboarded(slug!, { motivation, triggers });
           setOnboarded(true);
         }}
       />
