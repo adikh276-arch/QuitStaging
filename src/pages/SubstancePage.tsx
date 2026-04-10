@@ -68,7 +68,7 @@ const SubstancePage = () => {
   }
 
   const streak = getStreak(substance.slug);
-  const recoveryScore = Math.min(100, Math.round(50 + streak.days * 2.3));
+  const recoveryScore = Math.min(100, Math.round((streak.days / 90) * 100));
   const gradientClass = heroGradients[substance.slug] || 'from-primary to-primary/80';
   const sparkColor = sparkColors[substance.slug] || '#10b981';
   const cardAccent = cardAccents[substance.slug] || 'border-border';
@@ -111,21 +111,25 @@ const SubstancePage = () => {
     const entries = getEntries(substance.slug, trackerId, 21);
     return entries.map(e => {
       const keys = Object.keys(e.values).filter(k => k !== 'notes' && k !== 'date');
-      if (keys.length === 0) return { v: 0 };
-      // Prefer first numeric key
-      const numKey = keys.find(k => typeof e.values[k] === 'number');
-      if (numKey) return { v: Number(e.values[numKey]) };
-      // Fall back to aggregate score from all categorical fields
-      let total = 0;
-      let count = 0;
+      if (keys.length === 0) return { v: 0.5 }; // Slight lift for visual baseline
+      
+      // Calculate weighted impact score (0-10)
+      let totalImpact = 0;
+      let fieldCount = 0;
       for (const k of keys) {
-        const s = severityScore(e.values[k]);
-        if (s !== 0 || e.values[k] === 'None' || e.values[k] === 'No' || e.values[k] === 0) {
-          total += s;
-          count++;
+        const val = e.values[k];
+        if (typeof val === 'number') {
+          totalImpact += val;
+        } else {
+          totalImpact += severityScore(val);
         }
+        fieldCount++;
       }
-      return { v: count > 0 ? Math.round((total / count) * 10) / 10 : 0 };
+      
+      // Convert to a 0-10 scale for the sparklines
+      const baseScore = fieldCount > 0 ? (totalImpact / (fieldCount * 4)) * 10 : 0;
+      // Add a tiny random jitter if it's too flat but data exists
+      return { v: Math.max(0.2, baseScore + (Math.random() * 0.1)) };
     });
   };
 

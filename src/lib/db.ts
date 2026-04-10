@@ -1,7 +1,7 @@
 import { neon } from "@neondatabase/serverless";
 
 // Use VITE_ environment variables for browser access
-const databaseUrl = import.meta.env.VITE_DATABASE_URL;
+const databaseUrl = import.meta.env.VITE_DATABASE_URL || import.meta.env.DATABASE_URL;
 
 // Initialize the Neon SQL client (works over HTTP in the browser)
 const sql = databaseUrl ? neon(databaseUrl) : null;

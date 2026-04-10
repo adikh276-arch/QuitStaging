@@ -190,7 +190,7 @@ const SubstanceOnboarding = ({ substance, onComplete }: Props) => {
               {step === 2 && (
                 <div className="flex flex-wrap gap-2.5">
                   {substanceTriggers.map((_, i) => {
-                    const trigKey = `substances.${substance.slug}.triggers.${i}`;
+                    const trigKey = `quit.substances.${substance.slug}.triggers.${i}`;
                     const val = t(trigKey);
                     const selected = triggers.includes(val);
                     return (
