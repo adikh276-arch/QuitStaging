@@ -526,6 +526,7 @@ const ActivityRunner = ({ activity, substance, onBack }: { activity: any; substa
         <h2 className="mb-2 font-display text-xl text-foreground">{activity.name}</h2>
         {activity.description && <p className="mb-6 text-xs text-muted-foreground">{activity.description}</p>}
         <div className="space-y-4">
+          {activity.fields?.map((field: any) => (
             <div key={field.key}>
               <label className="text-xs font-medium text-foreground mb-1 block">
                 {t(`quit.substances.${substance.slug}.activities.${activity.id}.fields.${field.key}.label`, field.label)}
