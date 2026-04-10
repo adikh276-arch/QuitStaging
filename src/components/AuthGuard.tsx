@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import { initializeUser } from "../lib/user";
-
 export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const location = useLocation();
@@ -30,7 +28,7 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
             // 3. Store therapy_user_id
             if (data && data.user && data.user.id) {
               sessionStorage.setItem("therapy_user_id", data.user.id);
-              await initializeUser(data.user.id);
+              // Directly set authenticated, backend DB initialization should occur on the backend API side
               setIsAuthenticated(true);
               
               // 4. Remove token from URL
@@ -54,7 +52,7 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
       }
 
       if (therapyUserId) {
-        await initializeUser(therapyUserId);
+        // Already authenticated
         setIsAuthenticated(true);
       } else {
         // Not authenticated
