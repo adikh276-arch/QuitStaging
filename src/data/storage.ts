@@ -1,13 +1,31 @@
 import { TrackerEntry, AssessmentResult, SubstanceSlug } from './types';
+import { executeQuery } from '@/lib/db';
 
-export const getPrefix = () => `quitmantra_${localStorage.getItem('therapy_user_id') || 'anon'}`;
+const getUserId = () => localStorage.getItem('therapy_user_id') || 'anon';
+export const getPrefix = () => `quitmantra_${getUserId()}`;
 
-export function getEntryKey(substance: string, tracker: string, date: string) {
-  return `${getPrefix()}_entries_${substance}_${tracker}_${date}`;
-}
+/**
+ * Background sync to Neon DB
+ */
+const syncToNeon = async (id: string, data: any) => {
+  const userId = getUserId();
+  if (userId === 'anon') return;
+  
+  try {
+    await executeQuery(`
+      INSERT INTO activities (id, user_id, data)
+      VALUES ($1, $2, $3)
+      ON CONFLICT (id) DO UPDATE SET data = $3
+    `, [id, userId, JSON.stringify(data)]);
+  } catch (err) {
+    console.error(`[Sync] Failed to sync ${id} to Neon:`, err);
+  }
+};
 
 export function saveEntry(substance: string, tracker: string, date: string, entry: TrackerEntry) {
-  localStorage.setItem(getEntryKey(substance, tracker, date), JSON.stringify(entry));
+  const key = getEntryKey(substance, tracker, date);
+  localStorage.setItem(key, JSON.stringify(entry));
+  syncToNeon(key, entry);
 }
 
 export function getEntry(substance: string, tracker: string, date: string): TrackerEntry | null {
@@ -45,7 +63,9 @@ export function getAssessment(substance: string): AssessmentResult | null {
 }
 
 export function saveAssessment(substance: string, result: AssessmentResult) {
-  localStorage.setItem(`${getPrefix()}_assessment_${substance}`, JSON.stringify(result));
+  const key = `${getPrefix()}_assessment_${substance}`;
+  localStorage.setItem(key, JSON.stringify(result));
+  syncToNeon(key, result);
 }
 
 export function getCommunityUpvotes(substance: string): Record<string, boolean> {
@@ -68,7 +88,9 @@ export function getUserPosts(substance: string): any[] {
 export function addUserPost(substance: string, post: any) {
   const posts = getUserPosts(substance);
   posts.unshift(post);
-  localStorage.setItem(`${getPrefix()}_community_posts_${substance}`, JSON.stringify(posts));
+  const key = `${getPrefix()}_community_posts_${substance}`;
+  localStorage.setItem(key, JSON.stringify(posts));
+  syncToNeon(key, posts);
 }
 
 export function getAchievements(substance: string): Record<string, { unlocked: boolean; date?: string }> {

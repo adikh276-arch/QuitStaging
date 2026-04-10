@@ -1411,7 +1411,7 @@
   "quit.app.severity_severe": "Forte",
   "quit.app.retake": "Retomar",
   "quit.app.previous": "Anterior",
-  "quit.app.question_x_of_y": "Pergunta {{atual}} de {{total}}",
+  "quit.app.question_x_of_y": "Pergunta {{current}} de {{total}}",
   "quit.app.next": "Próximo",
   "quit.app.see_results": "Ver resultados",
   "quit.app.community": "Comunidade",

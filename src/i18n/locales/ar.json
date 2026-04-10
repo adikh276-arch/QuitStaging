@@ -1411,7 +1411,7 @@
   "quit.app.severity_severe": "شديد",
   "quit.app.retake": "إعادة الالتقاط",
   "quit.app.previous": "سابق",
-  "quit.app.question_x_of_y": "السؤال {{الحالي}} من {{total}}",
+  "quit.app.question_x_of_y": "السؤال {{current}} من {{total}}",
   "quit.app.next": "التالي",
   "quit.app.see_results": "انظر النتائج",
   "quit.app.community": "مجتمع",

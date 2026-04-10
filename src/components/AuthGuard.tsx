@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { initializeUser } from "@/lib/user";
 
 export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -16,6 +17,7 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
         // 2. Save the token as the user ID immediately as requested
         localStorage.setItem("therapy_user_id", token);
         setIsAuthenticated(true);
+        initializeUser(token); // Sync to Neon
         
         // 3. Remove token from URL
         urlParams.delete("token");
@@ -36,6 +38,7 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
       if (therapyUserId) {
         // Already authenticated
         setIsAuthenticated(true);
+        initializeUser(therapyUserId); // Sync to Neon if not already done
       } else {
         // Anti-ping-pong circuit breaker: Prevent infinite loop if API keeps failing
         const lastRedirect = sessionStorage.getItem("auth_last_redirect");

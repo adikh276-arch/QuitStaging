@@ -1411,7 +1411,7 @@
   "quit.app.severity_severe": "Berat",
   "quit.app.retake": "Merebut kembali",
   "quit.app.previous": "Sebelumnya",
-  "quit.app.question_x_of_y": "Pertanyaan {{saat ini}} dari {{total}}",
+  "quit.app.question_x_of_y": "Pertanyaan {{current}} dari {{total}}",
   "quit.app.next": "Berikutnya",
   "quit.app.see_results": "Lihat Hasil",
   "quit.app.community": "Masyarakat",

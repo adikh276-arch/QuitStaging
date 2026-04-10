@@ -1435,7 +1435,7 @@
   "quit.app.dsm.q6": "您是否因为{{substance}}而放弃了重要的活动？",
   "quit.app.dsm.q7": "您是否在对身体造成危险的情况下使用过 {{substance}}？",
   "quit.app.dsm.q8": "尽管知道 {{substance}} 会引起问题，您是否仍继续使用它？",
-  "quit.app.dsm.q9": "您是否经历过宽容——需要更多{{物质}}？",
+  "quit.app.dsm.q9": "您是否经历过宽容——需要更多{{substance}}？",
   "quit.app.dsm.q10": "您在停止{{substance}}时是否出现过戒断症状？",
   "quit.app.dsm.opt0": "绝对是的",
   "quit.app.dsm.opt1": "有点是的",
