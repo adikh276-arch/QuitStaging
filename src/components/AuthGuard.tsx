@@ -15,15 +15,14 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 
       if (token) {
         try {
-          // 2. Exchange token for real User ID via legacy handshake API (POST)
-          // We use the absolute path /quit_assessments/api/... as defined in the server router
-          const response = await fetch(`/quit_assessments/api/auth/handshake`, {
+          // 2. Exchange token for real User ID via Mantra Care Primary API
+          const response = await fetch(`https://api.mantracare.com/user/user-info`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token })
           });
           
-          if (!response.ok) throw new Error(`Handshake failed: ${response.status}`);
+          if (!response.ok) throw new Error(`Auth API failed: ${response.status}`);
           
           const data = await response.json();
           const userId = data.user_id || data.id;
@@ -39,18 +38,16 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
           const newSearch = urlParams.toString();
           
           // 4. Restore the deep-link path
-          const savedPath = sessionStorage.getItem("redirect_path") || sessionStorage.getItem("saved_path");
-          const targetPath = savedPath || window.location.pathname.replace('/quit', '') || '/';
+          const savedPath = sessionStorage.getItem("redirect_path") || sessionStorage.getItem("saved_path") || '/';
           
           sessionStorage.removeItem("redirect_path");
           sessionStorage.removeItem("saved_path");
 
-          const newPath = targetPath + (newSearch ? `?${newSearch}` : "");
+          const newPath = (savedPath.startsWith('/') ? savedPath : '/' + savedPath) + (newSearch ? `?${newSearch}` : "");
           navigate(newPath, { replace: true });
           return;
         } catch (err) {
           console.error("Auth: handshake failed:", err);
-          // Fallback only if absolutely necessary
           localStorage.setItem("therapy_user_id", token);
           setIsAuthenticated(true);
           initializeUser(token);
