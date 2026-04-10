@@ -10,6 +10,7 @@ import ToolModal from '@/components/ToolModal';
 import SubstanceIcon from '@/components/SubstanceIcon';
 import SubstanceOnboarding from '@/components/SubstanceOnboarding';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
+import { useToast } from '@/hooks/use-toast';
 
 const heroGradients: Record<string, string> = {
   alcohol: 'from-red-600 via-rose-500 to-red-700',
@@ -45,6 +46,7 @@ const SubstancePage = () => {
   const substance = getSubstance(slug || '');
   const [activeTracker, setActiveTracker] = useState<string | null>(null);
   const [activeTool, setActiveTool] = useState<string | null>(null);
+  const [lastUpdate, setLastUpdate] = useState(Date.now());
   const [onboarded, setOnboarded] = useState(() => {
     if (!slug) return false;
     return localStorage.getItem(`${getPrefix()}_onboarded_${slug}`) === 'true';
@@ -251,7 +253,7 @@ const SubstancePage = () => {
             {substance.trackers.map((tracker, i) => {
               const sparkData = getSparkData(tracker.id);
               const todayEntry = getEntries(substance.slug, tracker.id, 1);
-              const hasToday = todayEntry.length > 0 && todayEntry[0].date === new Date().toISOString().split('quit.T')[0];
+              const hasToday = todayEntry.length > 0 && todayEntry[0].date === new Date().toISOString().split('T')[0];
 
               return (
                 <motion.button
@@ -275,7 +277,7 @@ const SubstancePage = () => {
                     )}
                   </div>
                   <div className="h-10 w-full mt-auto opacity-60 group-hover:opacity-100 transition-opacity">
-                    {sparkData.length > 1 ? (
+                    {sparkData.length > 0 ? (
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={sparkData}>
                           <Line type="monotone" dataKey="v" stroke={sparkColor} strokeWidth={2} dot={false} />
@@ -328,14 +330,20 @@ const SubstancePage = () => {
         <TrackerDetail
           tracker={activeTrackerConfig}
           substance={substance}
-          onClose={() => setActiveTracker(null)}
+          onClose={() => {
+            setActiveTracker(null);
+            setLastUpdate(Date.now());
+          }}
         />
       )}
       {activeTool && (
         <ToolModal
           toolId={activeTool}
           substance={substance}
-          onClose={() => setActiveTool(null)}
+          onClose={() => {
+            setActiveTool(null);
+            setLastUpdate(Date.now());
+          }}
         />
       )}
     </div>

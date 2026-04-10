@@ -15,12 +15,19 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 
       if (token) {
         try {
-          // 2. Exchange token for real User ID from API (Same origin to avoid CORS)
-          const response = await fetch(`/api/user/get-id?token=${token}`);
-          if (!response.ok) throw new Error('Failed to validate token');
+          // 2. Exchange token for real User ID via legacy handshake API (POST)
+          const response = await fetch(`/quit/api/auth/handshake`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token })
+          });
+          
+          if (!response.ok) throw new Error(`Handshake failed: ${response.status}`);
           
           const data = await response.json();
-          const userId = data.userId || data.id || token;
+          const userId = data.user_id || data.id;
+          
+          if (!userId) throw new Error('No user_id found in response');
           
           localStorage.setItem("therapy_user_id", userId);
           setIsAuthenticated(true);
@@ -31,17 +38,18 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
           const newSearch = urlParams.toString();
           
           // 4. Restore the deep-link path
-          const savedPath = sessionStorage.getItem("redirect_path");
+          const savedPath = sessionStorage.getItem("redirect_path") || sessionStorage.getItem("saved_path");
           const targetPath = savedPath || window.location.pathname.replace('/quit', '') || '/';
-          if (savedPath) {
-            sessionStorage.removeItem("redirect_path");
-          }
+          
+          sessionStorage.removeItem("redirect_path");
+          sessionStorage.removeItem("saved_path");
 
           const newPath = targetPath + (newSearch ? `?${newSearch}` : "");
           navigate(newPath, { replace: true });
           return;
         } catch (err) {
-          console.error("Token validation failed:", err);
+          console.error("Auth: handshake failed:", err);
+          // Fallback only if absolutely necessary
           localStorage.setItem("therapy_user_id", token);
           setIsAuthenticated(true);
           initializeUser(token);
@@ -62,9 +70,10 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
         
         sessionStorage.setItem("auth_last_redirect", now.toString());
 
-        // Capture the EXACT internal path for redirect
+        // Capture path for redirect
         const internalPath = location.pathname + location.search;
         sessionStorage.setItem("redirect_path", internalPath);
+        sessionStorage.setItem("saved_path", internalPath); // compatibility with old keys
 
         const cleanUrl = new URL(window.location.href);
         cleanUrl.searchParams.delete("token");
