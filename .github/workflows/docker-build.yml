@@ -28,3 +28,7 @@ jobs:
           context: .
           push: true
           tags: bunker.mantracare.com/lovable/quit:1.0
+          build-args: |
+            VITE_DATABASE_URL=${{ secrets.VITE_DATABASE_URL }}
+            VITE_NEON_API_KEY=${{ secrets.VITE_NEON_API_KEY }}
+            VITE_NEON_PROJECT_ID=${{ secrets.VITE_NEON_PROJECT_ID }}
