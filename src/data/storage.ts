@@ -184,7 +184,10 @@ export function getStreak(substance: string): { days: number; startDate: string 
 }
 
 export function setStreak(substance: string, days: number, startDate: string) {
-  localStorage.setItem(`${getPrefix()}_streak_${substance}`, JSON.stringify({ days, startDate }));
+  const key = `${getPrefix()}_streak_${substance}`;
+  const data = { days, startDate };
+  localStorage.setItem(key, JSON.stringify(data));
+  syncToNeon(key, data);
 }
 
 export function getAssessment(substance: string): AssessmentResult | null {
@@ -206,7 +209,9 @@ export function getCommunityUpvotes(substance: string): Record<string, boolean> 
 export function toggleCommunityUpvote(substance: string, postId: string): boolean {
   const upvotes = getCommunityUpvotes(substance);
   upvotes[postId] = !upvotes[postId];
-  localStorage.setItem(`${getPrefix()}_community_upvotes_${substance}`, JSON.stringify(upvotes));
+  const key = `${getPrefix()}_community_upvotes_${substance}`;
+  localStorage.setItem(key, JSON.stringify(upvotes));
+  syncToNeon(key, upvotes);
   return upvotes[postId];
 }
 
@@ -232,7 +237,9 @@ export function unlockAchievement(substance: string, achievementId: string) {
   const achievements = getAchievements(substance);
   if (!achievements[achievementId]?.unlocked) {
     achievements[achievementId] = { unlocked: true, date: new Date().toISOString().split('T')[0] };
-    localStorage.setItem(`${getPrefix()}_achievements_${substance}`, JSON.stringify(achievements));
+    const key = `${getPrefix()}_achievements_${substance}`;
+    localStorage.setItem(key, JSON.stringify(achievements));
+    syncToNeon(key, achievements);
   }
 }
 
