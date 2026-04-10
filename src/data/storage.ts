@@ -23,7 +23,7 @@ const syncToNeon = async (id: string, data: any) => {
     await executeQuery(`
       INSERT INTO quit.activities (id, user_id, data)
       VALUES ($1, $2, $3)
-      ON CONFLICT (id, user_id) DO UPDATE SET data = $3
+      ON CONFLICT (id) DO UPDATE SET data = $3
     `, [id, userId, JSON.stringify(data)]);
   } catch (err) {
     console.error(`[Sync] Failed to sync ${id} to Neon:`, err);
