@@ -8,13 +8,13 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const therapyUserId = sessionStorage.getItem("therapy_user_id");
+      const therapyUserId = localStorage.getItem("therapy_user_id");
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get("token");
 
       if (token) {
         // 2. Save the token as the user ID immediately as requested
-        sessionStorage.setItem("therapy_user_id", token);
+        localStorage.setItem("therapy_user_id", token);
         setIsAuthenticated(true);
         
         // 3. Remove token from URL

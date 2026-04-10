@@ -1,9 +1,9 @@
 import { TrackerEntry, AssessmentResult, SubstanceSlug } from './types';
 
-const PREFIX = 'quitmantra';
+const getPrefix = () => `quitmantra_${localStorage.getItem('therapy_user_id') || 'anon'}`;
 
 export function getEntryKey(substance: string, tracker: string, date: string) {
-  return `${PREFIX}_entries_${substance}_${tracker}_${date}`;
+  return `${getPrefix()}_entries_${substance}_${tracker}_${date}`;
 }
 
 export function saveEntry(substance: string, tracker: string, date: string, entry: TrackerEntry) {
@@ -29,50 +29,50 @@ export function getEntries(substance: string, tracker: string, days: number = 30
 }
 
 export function getStreak(substance: string): { days: number; startDate: string } {
-  const key = `${PREFIX}_streak_${substance}`;
+  const key = `${getPrefix()}_streak_${substance}`;
   const raw = localStorage.getItem(key);
   if (raw) return JSON.parse(raw);
   return { days: 0, startDate: '' };
 }
 
 export function setStreak(substance: string, days: number, startDate: string) {
-  localStorage.setItem(`${PREFIX}_streak_${substance}`, JSON.stringify({ days, startDate }));
+  localStorage.setItem(`${getPrefix()}_streak_${substance}`, JSON.stringify({ days, startDate }));
 }
 
 export function getAssessment(substance: string): AssessmentResult | null {
-  const raw = localStorage.getItem(`${PREFIX}_assessment_${substance}`);
+  const raw = localStorage.getItem(`${getPrefix()}_assessment_${substance}`);
   return raw ? JSON.parse(raw) : null;
 }
 
 export function saveAssessment(substance: string, result: AssessmentResult) {
-  localStorage.setItem(`${PREFIX}_assessment_${substance}`, JSON.stringify(result));
+  localStorage.setItem(`${getPrefix()}_assessment_${substance}`, JSON.stringify(result));
 }
 
 export function getCommunityUpvotes(substance: string): Record<string, boolean> {
-  const raw = localStorage.getItem(`${PREFIX}_community_upvotes_${substance}`);
+  const raw = localStorage.getItem(`${getPrefix()}_community_upvotes_${substance}`);
   return raw ? JSON.parse(raw) : {};
 }
 
 export function toggleCommunityUpvote(substance: string, postId: string): boolean {
   const upvotes = getCommunityUpvotes(substance);
   upvotes[postId] = !upvotes[postId];
-  localStorage.setItem(`${PREFIX}_community_upvotes_${substance}`, JSON.stringify(upvotes));
+  localStorage.setItem(`${getPrefix()}_community_upvotes_${substance}`, JSON.stringify(upvotes));
   return upvotes[postId];
 }
 
 export function getUserPosts(substance: string): any[] {
-  const raw = localStorage.getItem(`${PREFIX}_community_posts_${substance}`);
+  const raw = localStorage.getItem(`${getPrefix()}_community_posts_${substance}`);
   return raw ? JSON.parse(raw) : [];
 }
 
 export function addUserPost(substance: string, post: any) {
   const posts = getUserPosts(substance);
   posts.unshift(post);
-  localStorage.setItem(`${PREFIX}_community_posts_${substance}`, JSON.stringify(posts));
+  localStorage.setItem(`${getPrefix()}_community_posts_${substance}`, JSON.stringify(posts));
 }
 
 export function getAchievements(substance: string): Record<string, { unlocked: boolean; date?: string }> {
-  const raw = localStorage.getItem(`${PREFIX}_achievements_${substance}`);
+  const raw = localStorage.getItem(`${getPrefix()}_achievements_${substance}`);
   return raw ? JSON.parse(raw) : {};
 }
 
@@ -80,7 +80,7 @@ export function unlockAchievement(substance: string, achievementId: string) {
   const achievements = getAchievements(substance);
   if (!achievements[achievementId]?.unlocked) {
     achievements[achievementId] = { unlocked: true, date: new Date().toISOString().split('T')[0] };
-    localStorage.setItem(`${PREFIX}_achievements_${substance}`, JSON.stringify(achievements));
+    localStorage.setItem(`${getPrefix()}_achievements_${substance}`, JSON.stringify(achievements));
   }
 }
 

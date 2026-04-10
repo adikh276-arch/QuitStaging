@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ArrowLeft, Calendar, Target, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { SubstanceConfig } from '@/data/types';
-import { setStreak } from '@/data/storage';
+import { setStreak, getPrefix } from '@/data/storage';
 import SubstanceIcon from './SubstanceIcon';
 
 const heroGradients: Record<string, string> = {
@@ -62,11 +62,11 @@ const SubstanceOnboarding = ({ substance, onComplete }: Props) => {
     const daysAgo = getQuitDaysAgo();
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - daysAgo);
-    const startStr = startDate.toISOString().split('quit.T')[0];
+    const startStr = startDate.toISOString().split('T')[0]; // fixed quit.T string split bug
     setStreak(substance.slug, daysAgo, startStr);
-    localStorage.setItem(`quitmantra_onboarded_${substance.slug}`, 'true');
-    localStorage.setItem(`quitmantra_motivation_${substance.slug}`, motivation || '');
-    localStorage.setItem(`quitmantra_triggers_${substance.slug}`, JSON.stringify(triggers));
+    localStorage.setItem(`${getPrefix()}_onboarded_${substance.slug}`, 'true');
+    localStorage.setItem(`${getPrefix()}_motivation_${substance.slug}`, motivation || '');
+    localStorage.setItem(`${getPrefix()}_triggers_${substance.slug}`, JSON.stringify(triggers));
     onComplete();
   };
 

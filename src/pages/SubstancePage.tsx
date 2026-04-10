@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ClipboardList, Calculator, Dumbbell, BookOpen, TrendingUp, Calendar, Flame, ChevronRight, Zap, Lightbulb } from 'lucide-react';
 import { getSubstance } from '@/data/substances';
-import { getStreak, getEntries } from '@/data/storage';
+import { getStreak, getEntries, getPrefix } from '@/data/storage';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import TrackerDetail from '@/components/TrackerDetail';
@@ -47,7 +47,7 @@ const SubstancePage = () => {
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [onboarded, setOnboarded] = useState(() => {
     if (!slug) return false;
-    return localStorage.getItem(`quitmantra_onboarded_${slug}`) === 'true';
+    return localStorage.getItem(`${getPrefix()}_onboarded_${slug}`) === 'true';
   });
 
   if (!substance) {
@@ -59,7 +59,10 @@ const SubstancePage = () => {
     return (
       <SubstanceOnboarding
         substance={substance}
-        onComplete={() => setOnboarded(true)}
+        onComplete={() => {
+          localStorage.setItem(`${getPrefix()}_onboarded_${slug}`, 'true');
+          setOnboarded(true);
+        }}
       />
     );
   }
