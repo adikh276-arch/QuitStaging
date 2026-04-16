@@ -174,17 +174,30 @@ function restoreAndNavigate(
   urlParams: URLSearchParams,
   navigate: ReturnType<typeof useNavigate>
 ) {
-  const savedPath = sessionStorage.getItem("redirect_path") || "/";
-  sessionStorage.removeItem("redirect_path");
+  // sessionStorage["redirect_path"] is only reliable within the same domain.
+  // When the user goes:  web.mantracare.com → auth portal → platform.mantracare.com/quit/alcohol?token=...
+  // the sessionStorage set on web.mantracare.com is NOT accessible here.
+  //
+  // However, the auth portal appends the token to the SAME return URL we gave it,
+  // so window.location.pathname already contains the correct destination
+  // (e.g. /quit/alcohol). We use that as the primary source of truth.
 
-  // Safety fallback: if somehow the full absolute path was saved (e.g. by an
-  // older version of the code), strip the basename prefix before navigating.
-  let routerPath = savedPath;
+  // Current pathname is e.g. "/quit/alcohol" (window) or "/alcohol" (router-relative).
+  // Strip the basename so we get a router-relative path.
+  let routerPath = window.location.pathname;
   if (routerPath.startsWith(BASENAME + "/")) {
-    routerPath = routerPath.slice(BASENAME.length);
-  } else if (routerPath === BASENAME) {
-    routerPath = "/";
+    routerPath = routerPath.slice(BASENAME.length); // "/quit/alcohol" → "/alcohol"
+  } else if (routerPath === BASENAME || routerPath === BASENAME + "/") {
+    // We're on the bare /quit root — check sessionStorage for a deeper path
+    const savedPath = sessionStorage.getItem("redirect_path") || "/";
+    routerPath = savedPath;
+    if (routerPath.startsWith(BASENAME + "/")) {
+      routerPath = routerPath.slice(BASENAME.length);
+    } else if (routerPath === BASENAME) {
+      routerPath = "/";
+    }
   }
+  sessionStorage.removeItem("redirect_path");
 
   // Strip auth params from the remaining query string
   urlParams.delete("token");

@@ -29,17 +29,29 @@ const substanceBgs: Record<string, string> = {
   mdma: 'bg-pink-50 dark:bg-pink-950/30',
 };
 
+const PLATFORM_HOST = "platform.mantracare.com";
+
 const SubstanceCard = ({ substance, index }: { substance: typeof substances[0]; index: number }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const streak = getStreak(substance.slug);
+
+  const handleClick = () => {
+    // If we're running on the marketing/web domain, do a hard cross-domain
+    // redirect to the platform so React Router doesn't get confused.
+    if (window.location.hostname !== PLATFORM_HOST) {
+      window.location.href = `https://${PLATFORM_HOST}/quit/${substance.slug}`;
+      return;
+    }
+    navigate(`/${substance.slug}`);
+  };
 
   return (
     <motion.button
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 + index * 0.06, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-      onClick={() => navigate(`/${substance.slug}`)}
+      onClick={handleClick}
       className={`group relative flex items-center gap-4 rounded-2xl p-4 text-left transition-all duration-300 hover:shadow-xl hover:-translate-y-1 active:scale-[0.98] ${substanceBgs[substance.slug] || 'bg-card'}`}
     >
       <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${substanceGradients[substance.slug] || 'from-primary to-primary/80'} shadow-lg`}>
