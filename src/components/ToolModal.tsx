@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronRight, ArrowUp, Lock, Check, Play, Pause, Trophy, Sparkles, Heart, BookmarkCheck, Bookmark, Target, Zap } from 'lucide-react';
+import { X, ChevronRight, ArrowUp, Lock, Check, Play, Pause, Trophy, Sparkles, Heart, BookmarkCheck, Bookmark, Target, Zap, Share2 } from 'lucide-react';
 import { DynamicIcon } from './DynamicIcon';
 import { SubstanceConfig } from '@/data/types';
 import { getAssessment, saveAssessment, toggleCommunityUpvote, getCommunityUpvotes, addUserPost, getUserPosts } from '@/data/storage';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ShareModal } from './ShareModal';
 
 interface Props {
   toolId: string;
@@ -194,10 +195,16 @@ const CalculatorView = ({ substance }: { substance: SubstanceConfig }) => {
 const ActivitiesView = ({ substance }: { substance: SubstanceConfig }) => {
   const { t } = useTranslation();
   const [active, setActive] = useState<string | null>(null);
+  const [showShare, setShowShare] = useState(false);
   const activeActivity = substance.activities.find(a => a.id === active);
 
   if (activeActivity) {
-    return <ActivityRunner activity={activeActivity} substance={substance} onBack={() => setActive(null)} />;
+    return (
+      <>
+        <ActivityRunner activity={activeActivity} substance={substance} onBack={() => setActive(null)} onShare={() => setShowShare(true)} />
+        <ShareModal isOpen={showShare} onClose={() => setShowShare(false)} activityName={t(`quit.substances.${substance.slug}.activities.${activeActivity.id}.name`)} activityType="activity" substanceName={t(`quit.substances.${substance.slug}.name`)} icon="Zap" />
+      </>
+    );
   }
 
   return (
@@ -218,7 +225,7 @@ const ActivitiesView = ({ substance }: { substance: SubstanceConfig }) => {
   );
 };
 
-const ActivityRunner = ({ activity, substance, onBack }: { activity: any; substance: SubstanceConfig; onBack: () => void }) => {
+const ActivityRunner = ({ activity, substance, onBack, onShare }: { activity: any; substance: SubstanceConfig; onBack: () => void; onShare: () => void; }) => {
   const { t } = useTranslation();
   const [checkedItems, setCheckedItems] = useState<Set<number>>(new Set());
   const [seconds, setSeconds] = useState(0);
@@ -268,7 +275,14 @@ const ActivityRunner = ({ activity, substance, onBack }: { activity: any; substa
 
   const currentPhase = activity.phases ? [...activity.phases].reverse().find((p: any) => seconds >= p.time) : null;
 
-  const backBtn = <button onClick={onBack} className="mb-4 text-xs text-muted-foreground hover:text-foreground transition-colors">← {t('quit.app.back', 'Back')}</button>;
+  const backBtn = (
+    <div className="mb-4 flex items-center justify-between">
+      <button onClick={onBack} className="text-xs text-muted-foreground hover:text-foreground transition-colors">← {t('quit.app.back', 'Back')}</button>
+      <button onClick={onShare} className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-[11px] font-bold text-primary hover:bg-primary/20 transition-colors">
+        <Share2 className="h-3.5 w-3.5" /> {t('quit.app.share', 'Share')}
+      </button>
+    </div>
+  );
 
   // ===== QUIZ =====
   if (activity.type === 'quiz' && activity.questions) {
@@ -650,15 +664,22 @@ const ActivityRunner = ({ activity, substance, onBack }: { activity: any; substa
 const LearnView = ({ substance }: { substance: SubstanceConfig }) => {
   const { t } = useTranslation();
   const [active, setActive] = useState<string | null>(null);
+  const [showShare, setShowShare] = useState(false);
   const article = substance.articles.find(a => a.id === active);
 
   if (article) {
     return (
       <div>
-        <button onClick={() => setActive(null)} className="mb-4 text-xs text-muted-foreground">← {t('quit.app.back')}</button>
+        <div className="mb-4 flex items-center justify-between">
+          <button onClick={() => setActive(null)} className="text-xs text-muted-foreground hover:text-foreground transition-colors">← {t('quit.app.back', 'Back')}</button>
+          <button onClick={() => setShowShare(true)} className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-[11px] font-bold text-primary hover:bg-primary/20 transition-colors">
+            <Share2 className="h-3.5 w-3.5" /> {t('quit.app.share', 'Share')}
+          </button>
+        </div>
         <span className="mb-2 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">{t(`quit.substances.${substance.slug}.articles.${article.id}.tag`, article.tag)}</span>
         <h2 className="mb-4 font-display text-xl text-foreground">{t(`quit.substances.${substance.slug}.articles.${article.id}.title`)}</h2>
         <div className="text-sm text-foreground leading-relaxed whitespace-pre-line">{t(`quit.substances.${substance.slug}.articles.${article.id}.content`)}</div>
+        <ShareModal isOpen={showShare} onClose={() => setShowShare(false)} activityName={t(`quit.substances.${substance.slug}.articles.${article.id}.title`)} activityType="learning resource" substanceName={t(`quit.substances.${substance.slug}.name`)} icon="BookOpen" />
       </div>
     );
   }

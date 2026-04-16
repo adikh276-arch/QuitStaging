@@ -5,6 +5,8 @@ import { BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, Responsi
 import { TrackerConfig, SubstanceConfig } from '@/data/types';
 import { getEntries, saveEntry, todayStr, getEntry } from '@/data/storage';
 import { useTranslation } from 'react-i18next';
+import { ShareModal } from './ShareModal';
+import { Share2 } from 'lucide-react';
 
 interface Props {
   tracker: TrackerConfig;
@@ -21,6 +23,7 @@ const TrackerDetail = ({ tracker, substance, onClose }: Props) => {
   const { t } = useTranslation();
   const [range, setRange] = useState<7 | 30 | 90>(7);
   const [showHistory, setShowHistory] = useState(false);
+  const [showShare, setShowShare] = useState(false);
   const [saved, setSaved] = useState(false);
   const todayEntry = getEntry(substance.slug, tracker.id, todayStr());
   const accentColor = sparkColors[substance.slug] || '#10b981';
@@ -68,9 +71,14 @@ const TrackerDetail = ({ tracker, substance, onClose }: Props) => {
             <h2 className="font-display text-xl text-foreground">{t(`quit.substances.${substance.slug}.trackers.${tracker.id}.name`)}</h2>
             <p className="text-xs text-muted-foreground mt-0.5">{t(`quit.substances.${substance.slug}.name`)}</p>
           </div>
-          <button onClick={onClose} className="rounded-xl p-2.5 hover:bg-muted transition-colors border border-border/60">
-            <X className="h-4 w-4 text-muted-foreground" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button onClick={() => setShowShare(true)} className="rounded-xl p-2.5 hover:bg-muted transition-colors border border-border/60">
+              <Share2 className="h-4 w-4 text-muted-foreground" />
+            </button>
+            <button onClick={onClose} className="rounded-xl p-2.5 hover:bg-muted transition-colors border border-border/60">
+              <X className="h-4 w-4 text-muted-foreground" />
+            </button>
+          </div>
         </div>
 
         {/* Log Form */}
@@ -240,6 +248,15 @@ const TrackerDetail = ({ tracker, substance, onClose }: Props) => {
           </AnimatePresence>
         </motion.div>
       </div>
+
+      <ShareModal
+        isOpen={showShare}
+        onClose={() => setShowShare(false)}
+        activityName={t(`quit.substances.${substance.slug}.trackers.${tracker.id}.name`, { defaultValue: tracker.id })}
+        activityType="tracker"
+        substanceName={t(`quit.substances.${substance.slug}.name`)}
+        icon="Target"
+      />
     </motion.div>
   );
 };
