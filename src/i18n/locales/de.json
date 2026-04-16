@@ -1647,5 +1647,10 @@
   "quit.substances.tobacco.triggers.3": "Geselliges Rauchen",
   "quit.substances.tobacco.triggers.4": "Fahren",
   "quit.substances.tobacco.triggers.5": "Kaffee",
-  "quit.app.started": "Begonnen"
+  "quit.app.started": "Begonnen",
+  "quit.app.share_journey": "Teilen Sie die Reise",
+  "quit.app.share_inspire": "Inspirieren Sie andere, indem Sie Ihre Fortschritte mit ihnen teilen",
+  "quit.app.share_to_app": "Mit App teilen",
+  "quit.app.copied": "Kopiert!",
+  "quit.app.copy_link": "Link kopieren"
 }

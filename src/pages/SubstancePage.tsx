@@ -68,13 +68,13 @@ const SubstancePage = () => {
     
     const resolveCloudData = async () => {
       const isStillOnboarded = await fetchOnboarded(slug);
-      setOnboarded(isStillOnboarded);
       
       if (isStillOnboarded) {
-        // If onboarded, immediately pull all other tracker/streak data
+        // Pull all records BEFORE switching from loading/null to onboarded state
         await syncUserDataFromCloud(slug);
-        setLastUpdate(Date.now()); // Force re-render with cloud data
       }
+      
+      setOnboarded(isStillOnboarded);
     };
 
     resolveCloudData();

@@ -1647,5 +1647,10 @@
   "quit.substances.tobacco.triggers.3": "사회적 흡연",
   "quit.substances.tobacco.triggers.4": "운전",
   "quit.substances.tobacco.triggers.5": "커피",
-  "quit.app.started": "시작됨"
+  "quit.app.started": "시작됨",
+  "quit.app.share_journey": "여행을 공유하세요",
+  "quit.app.share_inspire": "귀하의 진행 상황을 다른 사람들과 공유하여 다른 사람들에게 영감을 주세요.",
+  "quit.app.share_to_app": "앱에 공유",
+  "quit.app.copied": "복사되었습니다!",
+  "quit.app.copy_link": "링크 복사"
 }

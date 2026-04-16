@@ -1647,5 +1647,10 @@
   "quit.substances.tobacco.triggers.3": "Fumar socialmente",
   "quit.substances.tobacco.triggers.4": "Condução",
   "quit.substances.tobacco.triggers.5": "Café",
-  "quit.app.started": "Iniciado"
+  "quit.app.started": "Iniciado",
+  "quit.app.share_journey": "Compartilhe a jornada",
+  "quit.app.share_inspire": "Inspire outras pessoas compartilhando seu progresso com o",
+  "quit.app.share_to_app": "Compartilhar no aplicativo",
+  "quit.app.copied": "Copiado!",
+  "quit.app.copy_link": "Copiar link"
 }

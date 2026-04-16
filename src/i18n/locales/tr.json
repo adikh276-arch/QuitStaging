@@ -1647,5 +1647,10 @@
   "quit.substances.tobacco.triggers.3": "Sosyal sigara içme",
   "quit.substances.tobacco.triggers.4": "Araba kullanmak",
   "quit.substances.tobacco.triggers.5": "Kahve",
-  "quit.app.started": "Başlatıldı"
+  "quit.app.started": "Başlatıldı",
+  "quit.app.share_journey": "Yolculuğu Paylaşın",
+  "quit.app.share_inspire": "İlerlemenizi kullanıcılarla paylaşarak başkalarına ilham verin",
+  "quit.app.share_to_app": "Uygulamada Paylaş",
+  "quit.app.copied": "Kopyalandı!",
+  "quit.app.copy_link": "Bağlantıyı Kopyala"
 }

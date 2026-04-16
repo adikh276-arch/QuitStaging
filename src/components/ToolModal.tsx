@@ -15,6 +15,7 @@ interface Props {
 }
 
 const ToolModal = ({ toolId, substance, onClose }: Props) => {
+  const { t } = useTranslation();
   const [showShare, setShowShare] = useState(false);
   const [shareData, setShareData] = useState<{ name: string; type: string; icon: string }>({ name: '', type: '', icon: 'Sparkles' });
 
@@ -821,8 +822,8 @@ const PostComposer = ({ substance, onClose }: { substance: SubstanceConfig; onCl
       <div className="rounded-t-2xl bg-card px-4 pb-8 pt-4">
         <div className="mb-4 flex justify-between"><h3 className="font-display text-lg">{t('quit.app.new_post')}</h3><button onClick={onClose}><X className="h-5 w-5" /></button></div>
         <div className="mb-3 flex gap-2">
-          {['Story', 'Question', 'Tip', 'Milestone', 'Support'].map(t => (
-            <button key={t} onClick={() => setType(t)} className={`rounded-full px-3 py-1 text-xs font-medium ${type === t ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>{t}</button>
+          {['Story', 'Question', 'Tip', 'Milestone', 'Support'].map(typeOpt => (
+            <button key={typeOpt} onClick={() => setType(typeOpt)} className={`rounded-full px-3 py-1 text-xs font-medium ${type === typeOpt ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>{typeOpt}</button>
           ))}
         </div>
         <input value={title} onChange={e => setTitle(e.target.value)} placeholder={t('quit.app.community.title', 'Title')} className="mb-3 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm" />

@@ -1647,5 +1647,10 @@
   "quit.substances.tobacco.triggers.3": "การสูบบุหรี่เพื่อสังคม",
   "quit.substances.tobacco.triggers.4": "ขับรถ",
   "quit.substances.tobacco.triggers.5": "กาแฟ",
-  "quit.app.started": "เริ่ม"
+  "quit.app.started": "เริ่ม",
+  "quit.app.share_journey": "แบ่งปันการเดินทาง",
+  "quit.app.share_inspire": "สร้างแรงบันดาลใจให้ผู้อื่นด้วยการแบ่งปันความก้าวหน้าของคุณกับ",
+  "quit.app.share_to_app": "แชร์ไปที่แอป",
+  "quit.app.copied": "คัดลอก!",
+  "quit.app.copy_link": "คัดลอกลิงค์"
 }

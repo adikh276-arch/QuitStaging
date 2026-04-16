@@ -1647,5 +1647,10 @@
   "quit.substances.tobacco.triggers.3": "सामाजिक धूम्रपान",
   "quit.substances.tobacco.triggers.4": "ड्राइविंग",
   "quit.substances.tobacco.triggers.5": "कॉफी",
-  "quit.app.started": "शुरू कर दिया"
+  "quit.app.started": "शुरू कर दिया",
+  "quit.app.share_journey": "यात्रा साझा करें",
+  "quit.app.share_inspire": "अपनी प्रगति को दूसरों के साथ साझा करके प्रेरित करें",
+  "quit.app.share_to_app": "ऐप पर साझा करें",
+  "quit.app.copied": "नकल की गई!",
+  "quit.app.copy_link": "लिंक की प्रतिलिपि करें"
 }

@@ -1647,5 +1647,10 @@
   "quit.substances.tobacco.triggers.3": "Hút thuốc xã hội",
   "quit.substances.tobacco.triggers.4": "Cà phê",
   "quit.substances.tobacco.triggers.5": "Cà phê",
-  "quit.app.started": "Đã bắt đầu"
+  "quit.app.started": "Đã bắt đầu",
+  "quit.app.share_journey": "Chia sẻ hành trình",
+  "quit.app.share_inspire": "Truyền cảm hứng cho người khác bằng cách chia sẻ sự tiến bộ của bạn với",
+  "quit.app.share_to_app": "Chia sẻ lên ứng dụng",
+  "quit.app.copied": "Đã sao chép!",
+  "quit.app.copy_link": "Sao chép liên kết"
 }

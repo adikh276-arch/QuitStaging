@@ -1647,5 +1647,10 @@
   "quit.substances.tobacco.triggers.3": "Kawa",
   "quit.substances.tobacco.triggers.4": "Napędowy",
   "quit.substances.tobacco.triggers.5": "Kawa",
-  "quit.app.started": "Rozpoczęło się"
+  "quit.app.started": "Rozpoczęło się",
+  "quit.app.share_journey": "Podziel się podróżą",
+  "quit.app.share_inspire": "Inspiruj innych, dzieląc się swoimi postępami z",
+  "quit.app.share_to_app": "Udostępnij w aplikacji",
+  "quit.app.copied": "Skopiowano!",
+  "quit.app.copy_link": "Skopiuj link"
 }

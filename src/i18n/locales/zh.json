@@ -1647,5 +1647,10 @@
   "quit.substances.tobacco.triggers.3": "社交吸烟",
   "quit.substances.tobacco.triggers.4": "驾驶",
   "quit.substances.tobacco.triggers.5": "咖啡",
-  "quit.app.started": "开始"
+  "quit.app.started": "开始",
+  "quit.app.share_journey": "分享旅程",
+  "quit.app.share_inspire": "通过与他人分享您的进步来激励他人",
+  "quit.app.share_to_app": "分享到应用程序",
+  "quit.app.copied": "复制了！",
+  "quit.app.copy_link": "复制链接"
 }

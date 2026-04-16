@@ -4,7 +4,7 @@ import { neon } from "@neondatabase/serverless";
 const databaseUrl = import.meta.env.VITE_DATABASE_URL || import.meta.env.DATABASE_URL;
 
 // Initialize the Neon SQL client (works over HTTP in the browser)
-const sql = databaseUrl ? neon(databaseUrl) : null;
+const sql = databaseUrl ? neon(databaseUrl, { disableWarningInBrowsers: true } as any) : null;
 
 /**
  * Smart Query Rewriter

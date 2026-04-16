@@ -109,9 +109,9 @@ export const ShareModal = ({ isOpen, onClose, activityName, activityType, substa
              </div>
           </div>
 
-          <h3 className="mt-6 font-display text-2xl font-bold text-foreground">Share the Journey</h3>
+          <h3 className="mt-6 font-display text-2xl font-bold text-foreground">{t('quit.app.share_journey')}</h3>
           <p className="mt-2 text-sm text-muted-foreground px-4">
-            Inspire others by sharing your progress with the <strong>{activityName}</strong>.
+            {t('quit.app.share_inspire')} <strong>{activityName}</strong>.
           </p>
 
           <div className="mt-5 rounded-2xl bg-muted/50 p-4 border border-border/50 text-left relative overflow-hidden group">
@@ -126,7 +126,7 @@ export const ShareModal = ({ isOpen, onClose, activityName, activityType, substa
                  onClick={handleNativeShare}
                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all active:scale-[0.98]"
                >
-                 <Share2 className="h-4 w-4" /> Share to App
+                 <Share2 className="h-4 w-4" /> {t('quit.app.share_to_app')}
                </button>
             )}
 
@@ -149,7 +149,7 @@ export const ShareModal = ({ isOpen, onClose, activityName, activityType, substa
                  }`}
                >
                  {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                 {copied ? 'Copied!' : 'Copy Link'}
+                 {copied ? t('quit.app.copied') : t('quit.app.copy_link')}
                </button>
             </div>
           </div>

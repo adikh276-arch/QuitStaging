@@ -1647,5 +1647,10 @@
   "quit.substances.tobacco.triggers.3": "panlipunang paninigarilyo",
   "quit.substances.tobacco.triggers.4": "Pagmamaneho",
   "quit.substances.tobacco.triggers.5": "kape",
-  "quit.app.started": "Started"
+  "quit.app.started": "Started",
+  "quit.app.share_journey": "Share the Journey",
+  "quit.app.share_inspire": "Inspire others by sharing your progress with the",
+  "quit.app.share_to_app": "Share to App",
+  "quit.app.copied": "Copied!",
+  "quit.app.copy_link": "Copy Link"
 }

@@ -1647,5 +1647,10 @@
   "quit.substances.tobacco.triggers.3": "সামাজিক ধূমপান",
   "quit.substances.tobacco.triggers.4": "ড্রাইভিং",
   "quit.substances.tobacco.triggers.5": "কফি",
-  "quit.app.started": "শুরু হয়েছে"
+  "quit.app.started": "শুরু হয়েছে",
+  "quit.app.share_journey": "যাত্রা ভাগ করুন",
+  "quit.app.share_inspire": "সঙ্গে আপনার অগ্রগতি ভাগ করে অন্যদের অনুপ্রাণিত করুন",
+  "quit.app.share_to_app": "অ্যাপে শেয়ার করুন",
+  "quit.app.copied": "অনুলিপি করা হয়েছে!",
+  "quit.app.copy_link": "লিংক কপি করুন"
 }

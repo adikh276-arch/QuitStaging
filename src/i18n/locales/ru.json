@@ -1647,5 +1647,10 @@
   "quit.substances.tobacco.triggers.3": "Социальное курение",
   "quit.substances.tobacco.triggers.4": "Вождение",
   "quit.substances.tobacco.triggers.5": "Кофе",
-  "quit.app.started": "Началось"
+  "quit.app.started": "Началось",
+  "quit.app.share_journey": "Поделитесь путешествием",
+  "quit.app.share_inspire": "Вдохновляйте других, делясь своим прогрессом с",
+  "quit.app.share_to_app": "Поделиться в приложении",
+  "quit.app.copied": "Скопировано!",
+  "quit.app.copy_link": "Копировать ссылку"
 }

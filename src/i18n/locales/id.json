@@ -1647,5 +1647,10 @@
   "quit.substances.tobacco.triggers.3": "Merokok sosial",
   "quit.substances.tobacco.triggers.4": "Penggerak",
   "quit.substances.tobacco.triggers.5": "Kopi",
-  "quit.app.started": "Dimulai"
+  "quit.app.started": "Dimulai",
+  "quit.app.share_journey": "Bagikan Perjalanan",
+  "quit.app.share_inspire": "Menginspirasi orang lain dengan berbagi kemajuan Anda dengan",
+  "quit.app.share_to_app": "Bagikan ke Aplikasi",
+  "quit.app.copied": "Disalin!",
+  "quit.app.copy_link": "Salin Tautan"
 }

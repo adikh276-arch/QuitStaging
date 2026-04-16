@@ -1647,5 +1647,10 @@
   "quit.substances.tobacco.triggers.3": "社会的喫煙",
   "quit.substances.tobacco.triggers.4": "運転",
   "quit.substances.tobacco.triggers.5": "コーヒー",
-  "quit.app.started": "開始しました"
+  "quit.app.started": "開始しました",
+  "quit.app.share_journey": "旅を共有する",
+  "quit.app.share_inspire": "自分の進捗状況を共有して他の人にインスピレーションを与える",
+  "quit.app.share_to_app": "アプリに共有",
+  "quit.app.copied": "コピーしました！",
+  "quit.app.copy_link": "リンクをコピー"
 }

@@ -1647,5 +1647,10 @@
   "quit.substances.tobacco.triggers.3": "التدخين الاجتماعي",
   "quit.substances.tobacco.triggers.4": "القيادة",
   "quit.substances.tobacco.triggers.5": "قهوة",
-  "quit.app.started": "بدأت"
+  "quit.app.started": "بدأت",
+  "quit.app.share_journey": "شارك الرحلة",
+  "quit.app.share_inspire": "ألهم الآخرين من خلال مشاركة تقدمك مع",
+  "quit.app.share_to_app": "شارك في التطبيق",
+  "quit.app.copied": "منسوخ!",
+  "quit.app.copy_link": "نسخ الوصلة"
 }
