@@ -75,7 +75,7 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
           await migrateAnonData(urlUserId!);
           await initializeUser(urlUserId!);
           setIsReady(true);
-          restoreAndNavigate(navigate);
+          restoreAndNavigate(navigate, location.pathname);
           return;
         }
 
@@ -98,7 +98,7 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
                 await migrateAnonData(userId);
                 await initializeUser(userId);
                 setIsReady(true);
-                restoreAndNavigate(navigate);
+                restoreAndNavigate(navigate, location.pathname);
                 return;
               }
             }
@@ -114,7 +114,7 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
         await migrateAnonData(fallback);
         await initializeUser(fallback);
         setIsReady(true);
-        restoreAndNavigate(navigate);
+        restoreAndNavigate(navigate, location.pathname);
         return;
       }
 
@@ -156,14 +156,20 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 // restoreAndNavigate
 //
 // Reads the path saved in localStorage before the auth redirect and navigates
-// the user back to it. Falls back to "/" (home) if nothing was saved.
+// the user back to it. Falls back to currentPath if they landed directly, or "/".
 // ---------------------------------------------------------------------------
-function restoreAndNavigate(navigate: ReturnType<typeof useNavigate>) {
-  const savedPath = localStorage.getItem(REDIRECT_PATH_KEY) || "/";
+function restoreAndNavigate(navigate: ReturnType<typeof useNavigate>, currentPath: string) {
+  const savedPath = localStorage.getItem(REDIRECT_PATH_KEY);
   localStorage.removeItem(REDIRECT_PATH_KEY);
 
-  // savedPath is router-relative (e.g. "/alcohol") — pass directly to navigate()
-  // which resolves it relative to the /quit basename automatically.
-  console.log(`[Auth] Restoring to saved path: ${savedPath}`);
-  navigate(savedPath, { replace: true });
+  // If a path was saved prior to an auth redirect, use it.
+  // Otherwise, if they landed directly via a link with token (e.g. magic link), retain their current path.
+  let targetPath = savedPath;
+  if (!targetPath) {
+    targetPath = currentPath !== "/" && currentPath !== "" ? currentPath : "/";
+  }
+
+  // navigate() replaces the current URL including query string, thereby stripping the tokens safely.
+  console.log(`[Auth] Restoring to target path: ${targetPath}`);
+  navigate(targetPath, { replace: true });
 }
