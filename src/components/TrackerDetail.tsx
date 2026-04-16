@@ -94,6 +94,7 @@ const TrackerDetail = ({ tracker, substance, onClose }: Props) => {
             </span>
           </div>
 
+          <div className="space-y-5">
             {tracker.fields.map(field => {
               if (field.showIf) {
                 const depValue = values[field.showIf.field];
