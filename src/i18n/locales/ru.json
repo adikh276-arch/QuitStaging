@@ -1646,5 +1646,6 @@
   "quit.substances.tobacco.triggers.2": "Стресс",
   "quit.substances.tobacco.triggers.3": "Социальное курение",
   "quit.substances.tobacco.triggers.4": "Вождение",
-  "quit.substances.tobacco.triggers.5": "Кофе"
+  "quit.substances.tobacco.triggers.5": "Кофе",
+  "quit.app.started": "Началось"
 }
