@@ -71,12 +71,13 @@ const TrackerDetail = ({ tracker, substance, onClose }: Props) => {
             <h2 className="font-display text-xl text-foreground">{t(`quit.substances.${substance.slug}.trackers.${tracker.id}.name`)}</h2>
             <p className="text-xs text-muted-foreground mt-0.5">{t(`quit.substances.${substance.slug}.name`)}</p>
           </div>
-          <div className="flex items-center gap-2">
-            <button onClick={() => setShowShare(true)} className="rounded-xl p-2.5 hover:bg-muted transition-colors border border-border/60">
-              <Share2 className="h-4 w-4 text-muted-foreground" />
+          <div className="flex items-center gap-3">
+            <button onClick={() => setShowShare(true)} className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-[11px] font-bold text-primary hover:bg-primary/20 transition-colors">
+              <Share2 className="h-3.5 w-3.5" />
+              {t('quit.app.share', 'Share')}
             </button>
-            <button onClick={onClose} className="rounded-xl p-2.5 hover:bg-muted transition-colors border border-border/60">
-              <X className="h-4 w-4 text-muted-foreground" />
+            <button onClick={onClose} className="rounded-xl p-2 hover:bg-muted transition-colors">
+              <X className="h-5 w-5 text-muted-foreground" />
             </button>
           </div>
         </div>

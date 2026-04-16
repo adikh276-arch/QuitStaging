@@ -15,6 +15,13 @@ interface Props {
 }
 
 const ToolModal = ({ toolId, substance, onClose }: Props) => {
+  const [showShare, setShowShare] = useState(false);
+  const [shareData, setShareData] = useState<{ name: string; type: string; icon: string }>({ name: '', type: '', icon: 'Sparkles' });
+
+  const openShare = (name: string, type: string, icon: string) => {
+    setShareData({ name, type, icon });
+    setShowShare(true);
+  };
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-background overflow-y-auto">
       <div className="mx-auto max-w-lg px-4 pb-8">
@@ -23,11 +30,19 @@ const ToolModal = ({ toolId, substance, onClose }: Props) => {
         </div>
         {toolId === 'assessment' && <Assessment substance={substance} />}
         {toolId === 'calculator' && <CalculatorView substance={substance} />}
-        {toolId === 'activities' && <ActivitiesView substance={substance} />}
-        {toolId === 'learn' && <LearnView substance={substance} />}
+        {toolId === 'activities' && <ActivitiesView substance={substance} onShare={openShare} />}
+        {toolId === 'learn' && <LearnView substance={substance} onShare={openShare} />}
         {toolId === 'community' && <CommunityView substance={substance} />}
         {toolId === 'achievements' && <AchievementsView substance={substance} />}
       </div>
+      <ShareModal
+        isOpen={showShare}
+        onClose={() => setShowShare(false)}
+        activityName={shareData.name}
+        activityType={shareData.type}
+        substanceName={t(`quit.substances.${substance.slug}.name`)}
+        icon={shareData.icon}
+      />
     </motion.div>
   );
 };
@@ -91,6 +106,11 @@ const Assessment = ({ substance }: { substance: SubstanceConfig }) => {
 
     return (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center">
+        <div className="mb-6 flex justify-end">
+          <button onClick={() => openShare(t('quit.app.assessment'), 'assessment', 'Target')} className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-[11px] font-bold text-primary hover:bg-primary/20 transition-colors">
+            <Share2 className="h-3.5 w-3.5" /> {t('quit.app.share', 'Share')}
+          </button>
+        </div>
         <h2 className="font-display text-2xl text-foreground">{t('quit.app.results')}</h2>
         <p className={`mt-4 font-display text-4xl font-bold ${color}`}>{normalizedScore}/11</p>
         <p className={`mt-2 text-lg font-semibold ${color}`}>{severity} {t('quit.app.substance_use_disorder')}</p>
@@ -150,7 +170,12 @@ const CalculatorView = ({ substance }: { substance: SubstanceConfig }) => {
 
   return (
     <div>
-      <h2 className="mb-4 font-display text-xl text-foreground">{t(`quit.substances.${substance.slug}.calculator.title`)}</h2>
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="font-display text-xl text-foreground">{t(`quit.substances.${substance.slug}.calculator.title`)}</h2>
+        <button onClick={() => openShare(t(`quit.substances.${substance.slug}.calculator.title`), 'health calculator', 'Zap')} className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-[11px] font-bold text-primary hover:bg-primary/20 transition-colors">
+          <Share2 className="h-3.5 w-3.5" /> {t('quit.app.share', 'Share')}
+        </button>
+      </div>
       <div className="space-y-4">
         {calc.inputs.map(input => (
           <div key={input.key}>
@@ -192,18 +217,19 @@ const CalculatorView = ({ substance }: { substance: SubstanceConfig }) => {
 };
 
 // ===== ACTIVITIES =====
-const ActivitiesView = ({ substance }: { substance: SubstanceConfig }) => {
+const ActivitiesView = ({ substance, onShare }: { substance: SubstanceConfig; onShare: (name: string, type: string, icon: string) => void }) => {
   const { t } = useTranslation();
   const [active, setActive] = useState<string | null>(null);
-  const [showShare, setShowShare] = useState(false);
   const activeActivity = substance.activities.find(a => a.id === active);
 
   if (activeActivity) {
     return (
-      <>
-        <ActivityRunner activity={activeActivity} substance={substance} onBack={() => setActive(null)} onShare={() => setShowShare(true)} />
-        <ShareModal isOpen={showShare} onClose={() => setShowShare(false)} activityName={t(`quit.substances.${substance.slug}.activities.${activeActivity.id}.name`)} activityType="activity" substanceName={t(`quit.substances.${substance.slug}.name`)} icon="Zap" />
-      </>
+      <ActivityRunner
+        activity={activeActivity}
+        substance={substance}
+        onBack={() => setActive(null)}
+        onShare={() => onShare(t(`quit.substances.${substance.slug}.activities.${activeActivity.id}.name`), 'activity', 'Zap')}
+      />
     );
   }
 
@@ -661,10 +687,9 @@ const ActivityRunner = ({ activity, substance, onBack, onShare }: { activity: an
 };
 
 // ===== LEARN =====
-const LearnView = ({ substance }: { substance: SubstanceConfig }) => {
+const LearnView = ({ substance, onShare }: { substance: SubstanceConfig; onShare: (name: string, type: string, icon: string) => void }) => {
   const { t } = useTranslation();
   const [active, setActive] = useState<string | null>(null);
-  const [showShare, setShowShare] = useState(false);
   const article = substance.articles.find(a => a.id === active);
 
   if (article) {
@@ -672,14 +697,16 @@ const LearnView = ({ substance }: { substance: SubstanceConfig }) => {
       <div>
         <div className="mb-4 flex items-center justify-between">
           <button onClick={() => setActive(null)} className="text-xs text-muted-foreground hover:text-foreground transition-colors">← {t('quit.app.back', 'Back')}</button>
-          <button onClick={() => setShowShare(true)} className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-[11px] font-bold text-primary hover:bg-primary/20 transition-colors">
+          <button
+            onClick={() => onShare(t(`quit.substances.${substance.slug}.articles.${article.id}.title`), 'learning resource', 'BookOpen')}
+            className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-[11px] font-bold text-primary hover:bg-primary/20 transition-colors"
+          >
             <Share2 className="h-3.5 w-3.5" /> {t('quit.app.share', 'Share')}
           </button>
         </div>
         <span className="mb-2 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">{t(`quit.substances.${substance.slug}.articles.${article.id}.tag`, article.tag)}</span>
         <h2 className="mb-4 font-display text-xl text-foreground">{t(`quit.substances.${substance.slug}.articles.${article.id}.title`)}</h2>
         <div className="text-sm text-foreground leading-relaxed whitespace-pre-line">{t(`quit.substances.${substance.slug}.articles.${article.id}.content`)}</div>
-        <ShareModal isOpen={showShare} onClose={() => setShowShare(false)} activityName={t(`quit.substances.${substance.slug}.articles.${article.id}.title`)} activityType="learning resource" substanceName={t(`quit.substances.${substance.slug}.name`)} icon="BookOpen" />
       </div>
     );
   }
