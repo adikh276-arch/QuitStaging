@@ -215,14 +215,12 @@ const SubstanceOnboarding = ({ substance, onComplete }: Props) => {
 
         {/* Navigation */}
         <div className="flex items-center gap-3 mt-8">
-          {step > 0 && (
-            <button
-              onClick={() => setStep(s => s - 1)}
-              className="flex items-center gap-1.5 rounded-2xl border-2 border-border/60 px-5 py-3.5 text-sm font-bold text-muted-foreground hover:text-foreground hover:border-border transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" /> {t('quit.app.back')}
-            </button>
-          )}
+          <button
+            onClick={() => step > 0 ? setStep(s => s - 1) : window.location.href = 'https://web.mantracare.com/quit'}
+            className="flex items-center gap-1.5 rounded-2xl border-2 border-border/60 px-5 py-3.5 text-sm font-bold text-muted-foreground hover:text-foreground hover:border-border transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" /> {t('quit.app.back')}
+          </button>
           <button
             onClick={() => step < 2 ? setStep(s => s + 1) : handleComplete()}
             disabled={!canNext()}

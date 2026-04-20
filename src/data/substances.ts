@@ -27,12 +27,14 @@ export const substances: SubstanceConfig[] = [
         id: 'consumption', name: 'Consumption Log', chartType: 'bar', yAxisLabel: 'Units',
         insight: "You haven't exceeded 1 unit in 11 days. Your liver is already regenerating.",
         fields: [
-          { key: 'units', label: 'Units consumed today', type: 'slider', min: 0, max: 20, step: 1 },
-          { key: 'drinkType', label: 'Drink type', type: 'chips', options: ['Beer', 'Wine', 'Spirits', 'Mixed', 'None'], showIf: { field: 'units', value: 0, op: '!==' } },
-          { key: 'trigger', label: 'Primary trigger', type: 'chips', options: ['Stress', 'Social', 'Habit', 'Boredom', 'Emotion', 'None'] },
+          { key: 'drankToday', label: 'Did you drink today?', type: 'single-select', options: ['Yes', 'No'] },
+          { key: 'units', label: 'Units consumed today', type: 'slider', min: 0, max: 20, step: 1, showIf: { field: 'drankToday', value: 'Yes' } },
+          { key: 'drinkType', label: 'Drink type', type: 'chips', options: ['Beer', 'Wine', 'Spirits', 'Mixed', 'None'], showIf: { field: 'drankToday', value: 'Yes' } },
+          { key: 'trigger', label: 'Primary trigger', type: 'chips', options: ['Stress', 'Social', 'Habit', 'Boredom', 'Emotion', 'None'], showIf: { field: 'drankToday', value: 'Yes' } },
           { key: 'notes', label: 'Notes', type: 'textarea' },
         ],
         mockGenerator: (day) => ({
+          drankToday: day < 14 ? 'Yes' : 'No',
           units: day < 7 ? ri(Math.max(0, 8 - day), Math.max(1, 10 - day)) : day < 14 ? ri(0, Math.max(0, 3 - (day - 7))) : 0,
           drinkType: day < 14 ? pick(['Beer', 'Wine', 'Spirits']) : 'None',
           trigger: day < 14 ? pick(['Stress', 'Social', 'Habit']) : 'None',
@@ -225,12 +227,13 @@ export const substances: SubstanceConfig[] = [
         id: 'cigarettes', name: 'Daily Cigarettes', chartType: 'bar', yAxisLabel: 'Cigarettes',
         insight: "Morning cigarettes are the last habit standing. Try a 15-minute walk immediately after waking.",
         fields: [
-          { key: 'count', label: 'Cigarettes smoked today', type: 'number', min: 0, max: 60 },
-          { key: 'type', label: 'Type', type: 'chips', options: ['Cigarette', 'Vape', 'Pouch', 'Pipe', 'None'], showIf: { field: 'count', value: 0, op: '!==' } },
-          { key: 'occasion', label: 'Occasion', type: 'chips', options: ['Morning', 'After meals', 'Stress', 'Social', 'Boredom', 'Other'], multiSelect: true, showIf: { field: 'count', value: 0, op: '!==' } },
+          { key: 'smokedToday', label: 'Did you smoke today?', type: 'single-select', options: ['Yes', 'No'] },
+          { key: 'count', label: 'Cigarettes smoked today', type: 'number', min: 0, max: 60, showIf: { field: 'smokedToday', value: 'Yes' } },
+          { key: 'type', label: 'Type', type: 'chips', options: ['Cigarette', 'Vape', 'Pouch', 'Pipe', 'None'], showIf: { field: 'smokedToday', value: 'Yes' } },
+          { key: 'occasion', label: 'Occasion', type: 'chips', options: ['Morning', 'After meals', 'Stress', 'Social', 'Boredom', 'Other'], multiSelect: true, showIf: { field: 'smokedToday', value: 'Yes' } },
           { key: 'notes', label: 'Notes', type: 'textarea' },
         ],
-        mockGenerator: (day) => ({ count: Math.max(0, ri(22 - Math.floor(day * 1.2), 24 - Math.floor(day * 1.1))), type: day > 14 ? 'None' : 'Cigarette', occasion: day < 14 ? [pick(['Morning', 'After meals', 'Stress'])] : ['None'], notes: noteFor(day) }),
+        mockGenerator: (day) => ({ smokedToday: day < 14 ? 'Yes' : 'No', count: Math.max(0, ri(22 - Math.floor(day * 1.2), 24 - Math.floor(day * 1.1))), type: day > 14 ? 'None' : 'Cigarette', occasion: day < 14 ? [pick(['Morning', 'After meals', 'Stress'])] : ['None'], notes: noteFor(day) }),
       },
       {
         id: 'cravings', name: 'Craving Patterns', chartType: 'line', yAxisLabel: 'Cravings',
@@ -274,11 +277,11 @@ export const substances: SubstanceConfig[] = [
         insight: "Getting 14mg from NRT vs 40mg when fully smoking. 65% nicotine reduction.",
         fields: [
           { key: 'nrtType', label: 'NRT used', type: 'chips', options: ['Patch', 'Gum', 'Lozenge', 'Inhaler', 'None'] },
-          { key: 'patchLevel', label: 'Patch level', type: 'chips', options: ['7mg', '14mg', '21mg'] },
-          { key: 'extraCigarettes', label: 'Cigarettes on top', type: 'number', min: 0, max: 20 },
+          { key: 'patchLevel', label: 'Patch level', type: 'chips', options: ['7mg', '14mg', '21mg'], showIf: { field: 'nrtType', value: 'None', op: '!==' } },
+          { key: 'extraCigarettes', label: 'Cigarettes on top', type: 'number', min: 0, max: 20, showIf: { field: 'nrtType', value: 'None', op: '!==' } },
           { key: 'notes', label: 'Notes', type: 'textarea' },
         ],
-        mockGenerator: (day) => ({ nrtType: 'Patch', patchLevel: day < 7 ? '21mg' : '14mg', extraCigarettes: Math.max(0, ri(10 - day, 12 - day)), totalNicotine: day < 7 ? ri(30, 40) : ri(14, 20), notes: noteFor(day) }),
+        mockGenerator: (day) => ({ nrtType: day < 14 ? 'Patch' : 'None', patchLevel: day < 7 ? '21mg' : '14mg', extraCigarettes: day < 14 ? Math.max(0, ri(1, 3)) : 0, totalNicotine: day < 7 ? ri(30, 40) : ri(14, 20), notes: noteFor(day) }),
       },
       {
         id: 'financial-health', name: 'Financial & Health', chartType: 'area', yAxisLabel: 'Saved',
@@ -381,14 +384,23 @@ export const substances: SubstanceConfig[] = [
       },
       { id: 'craving-pain', name: 'Craving & Pain', chartType: 'line', yAxisLabel: 'Intensity', insight: 'Craving down from 9.4 on Day 1. Pain resolves more slowly but is also declining.',
         fields: [
-          { key: 'cravingIntensity', label: 'Craving intensity', type: 'slider', min: 1, max: 10, step: 1 },
+          { key: 'hadCraving', label: 'Did you have cravings today?', type: 'single-select', options: ['Yes', 'No'] },
+          { key: 'cravingIntensity', label: 'Craving intensity', type: 'slider', min: 1, max: 10, step: 1, showIf: { field: 'hadCraving', value: 'Yes' } },
           { key: 'physicalPain', label: 'Physical pain', type: 'slider', min: 1, max: 10, step: 1 },
           { key: 'emotionalPain', label: 'Emotional pain', type: 'slider', min: 1, max: 10, step: 1 },
-          { key: 'trigger', label: 'Primary trigger', type: 'chips', options: ['Physical pain', 'Stress', 'Boredom', 'Location', 'Person', 'Memory'] },
-          { key: 'coping', label: 'Coping used', type: 'chips', options: ['MAT dose', 'Support call', 'Exercise', 'Breathing', 'Distraction'] },
+          { key: 'trigger', label: 'Primary trigger', type: 'chips', options: ['Physical pain', 'Stress', 'Boredom', 'Location', 'Person', 'Memory'], showIf: { field: 'hadCraving', value: 'Yes' } },
+          { key: 'coping', label: 'Coping used', type: 'chips', options: ['MAT dose', 'Support call', 'Exercise', 'Breathing', 'Distraction'], showIf: { field: 'hadCraving', value: 'Yes' } },
           { key: 'notes', label: 'Notes', type: 'textarea' },
         ],
-        mockGenerator: (day) => ({ cravingIntensity: Math.max(1, rn(9 - day * 0.4, 10 - day * 0.35)), physicalPain: Math.max(1, rn(8 - day * 0.3, 9 - day * 0.25)), emotionalPain: Math.max(1, rn(7 - day * 0.25, 8 - day * 0.2)), trigger: pick(['Physical pain', 'Stress']), coping: pick(['MAT dose', 'Exercise']), notes: noteFor(day) }),
+        mockGenerator: (day) => ({
+          hadCraving: day < 14 ? 'Yes' : 'No',
+          cravingIntensity: day < 14 ? Math.max(1, rn(9 - day * 0.4, 10 - day * 0.35)) : 1,
+          physicalPain: Math.max(1, rn(8 - day * 0.3, 9 - day * 0.25)),
+          emotionalPain: Math.max(1, rn(7 - day * 0.25, 8 - day * 0.2)),
+          trigger: day < 14 ? pick(['Physical pain', 'Stress']) : '',
+          coping: day < 14 ? pick(['MAT dose', 'Exercise']) : '',
+          notes: noteFor(day)
+        }),
       },
       { id: 'withdrawal', name: 'Withdrawal Symptoms', chartType: 'stacked-bar', yAxisLabel: 'Burden', insight: 'With MAT, your symptom burden was 4 lower than expected.',
         fields: [
@@ -508,15 +520,27 @@ export const substances: SubstanceConfig[] = [
     trackers: [
       { id: 'use-log', name: 'Use Log', chartType: 'bar', yAxisLabel: 'Sessions', insight: '16 consecutive days without use. Appetite and sleep are normalizing independently.',
         fields: [
-          { key: 'sessions', label: 'Sessions today', type: 'number', min: 0, max: 10 },
-          { key: 'method', label: 'Method', type: 'chips', options: ['Smoked', 'Vaped', 'Edible', 'Dab', 'None'], showIf: { field: 'sessions', value: 0, op: '!==' } },
-          { key: 'amount', label: 'Amount', type: 'chips', options: ['Small', 'Medium', 'Large', 'None'], showIf: { field: 'sessions', value: 0, op: '!==' } },
+          { key: 'usedToday', label: 'Did you use today?', type: 'single-select', options: ['Yes', 'No'] },
+          { key: 'sessions', label: 'Sessions today', type: 'number', min: 0, max: 10, showIf: { field: 'usedToday', value: 'Yes' } },
+          { key: 'method', label: 'Method', type: 'chips', options: ['Smoked', 'Vaped', 'Edible', 'Dab'], showIf: { field: 'usedToday', value: 'Yes' } },
+          { key: 'amount', label: 'Amount', type: 'chips', options: ['Small', 'Medium', 'Large'], showIf: { field: 'usedToday', value: 'Yes' } },
           { key: 'notes', label: 'Notes', type: 'textarea' }
         ],
-        mockGenerator: (day) => ({ sessions: day < 5 ? ri(1, 4 - Math.floor(day * 0.5)) : 0, method: day < 5 ? 'Smoked' : 'None', amount: day < 5 ? pick(['Small', 'Medium']) : 'None', notes: noteFor(day) }),
+        mockGenerator: (day) => ({
+          usedToday: day < 5 ? 'Yes' : 'No',
+          sessions: day < 5 ? ri(1, 4 - Math.floor(day * 0.5)) : 0,
+          method: day < 5 ? 'Smoked' : '',
+          amount: day < 5 ? pick(['Small', 'Medium']) : '',
+          notes: noteFor(day)
+        }),
       },
       { id: 'cravings', name: 'Craving & Triggers', chartType: 'line', yAxisLabel: 'Intensity', insight: 'Evening cravings are your last remaining pattern. Daytime cravings have resolved.',
-        fields: [{ key: 'intensity', label: 'Craving intensity', type: 'slider', min: 0, max: 10, step: 1 }, { key: 'trigger', label: 'Trigger', type: 'chips', options: ['Boredom', 'Evening', 'Stress', 'Social', 'Sleep', 'Habit'] }, { key: 'resisted', label: 'Resisted?', type: 'single-select', options: ['Yes', 'No'] }, { key: 'notes', label: 'Notes', type: 'textarea' }],
+        fields: [
+          { key: 'intensity', label: 'Craving intensity', type: 'slider', min: 0, max: 10, step: 1 },
+          { key: 'trigger', label: 'Trigger', type: 'chips', options: ['Boredom', 'Evening', 'Stress', 'Social', 'Sleep', 'Habit'], showIf: { field: 'intensity', value: 0, op: '!==' } },
+          { key: 'resisted', label: 'Resisted?', type: 'single-select', options: ['Yes', 'No'], showIf: { field: 'intensity', value: 0, op: '!==' } },
+          { key: 'notes', label: 'Notes', type: 'textarea' }
+        ],
         mockGenerator: (day) => ({ intensity: Math.max(0, rn(7 - day * 0.3, 8 - day * 0.28)), trigger: pick(['Boredom', 'Evening', 'Stress']), resisted: day > 5 ? 'Yes' : pick(['Yes', 'No']), notes: noteFor(day) }),
       },
       { id: 'sleep', name: 'Sleep Recovery', chartType: 'area', yAxisLabel: 'Hours', insight: 'Night sweats resolved by Day 10. Sleep duration back to 7+ hours.',
@@ -630,7 +654,13 @@ export const substances: SubstanceConfig[] = [
         mockGenerator: (day) => ({ heartRate: Math.round(118 - day * 2.2), appetite: day > 10 ? 'Normal' : day > 5 ? 'Minimal' : 'None', energy: Math.min(10, rn(2 + day * 0.3, 3 + day * 0.25)), notes: noteFor(day) }),
       },
       { id: 'cravings', name: 'Cravings & Triggers', chartType: 'line', yAxisLabel: 'Cravings', insight: 'Week 3 cravings are largely psychological.',
-        fields: [{ key: 'count', label: 'Craving count', type: 'slider', min: 0, max: 15, step: 1 }, { key: 'peakIntensity', label: 'Peak intensity', type: 'slider', min: 1, max: 10, step: 1 }, { key: 'trigger', label: 'Primary trigger', type: 'chips', options: ['Stress', 'Depression', 'Boredom', 'Social', 'Location', 'Person'] }, { key: 'resisted', label: 'Resisted', type: 'single-select', options: ['Yes', 'No'] }, { key: 'notes', label: 'Notes', type: 'textarea' }],
+        fields: [
+          { key: 'count', label: 'Craving count', type: 'slider', min: 0, max: 15, step: 1 },
+          { key: 'peakIntensity', label: 'Peak intensity', type: 'slider', min: 1, max: 10, step: 1, showIf: { field: 'count', value: 0, op: '!==' } },
+          { key: 'trigger', label: 'Primary trigger', type: 'chips', options: ['Stress', 'Depression', 'Boredom', 'Social', 'Location', 'Person'], showIf: { field: 'count', value: 0, op: '!==' } },
+          { key: 'resisted', label: 'Resisted', type: 'single-select', options: ['Yes', 'No'], showIf: { field: 'count', value: 0, op: '!==' } },
+          { key: 'notes', label: 'Notes', type: 'textarea' }
+        ],
         mockGenerator: (day) => ({ count: Math.max(0, ri(10 - Math.floor(day * 0.4), 12 - Math.floor(day * 0.38))), peakIntensity: Math.max(1, ri(8 - Math.floor(day * 0.3), 9 - Math.floor(day * 0.28))), trigger: pick(['Stress', 'Depression', 'Boredom']), resisted: day > 7 ? 'Yes' : pick(['Yes', 'No']), notes: noteFor(day) }),
       },
       { id: 'risk-behaviors', name: 'Risk Behaviors', chartType: 'bar', yAxisLabel: 'Incidents', insight: 'Zero risk behaviors in 13 days.',
@@ -712,8 +742,13 @@ export const substances: SubstanceConfig[] = [
     banner: { text: 'Medically supervised taper  Dr. Sharma checked in 3 days ago', type: 'info', dismissable: false },
     trackers: [
       { id: 'taper', name: 'Taper Progress', chartType: 'line', yAxisLabel: 'mg/day', insight: 'Perfectly tracking prescribed schedule.',
-        fields: [{ key: 'doseTaken', label: 'Dose taken (mg)', type: 'number', min: 0, max: 20 }, { key: 'asPerscribed', label: 'As prescribed', type: 'single-select', options: ['Yes', 'No'] }, { key: 'notes', label: 'Notes', type: 'textarea' }],
-        mockGenerator: (day) => ({ doseTaken: day < 7 ? 4 : day < 14 ? 3 : 2, asPrescribed: 'Yes', notes: noteFor(day) }),
+        fields: [
+          { key: 'takenToday', label: 'Did you take your dose today?', type: 'single-select', options: ['Yes', 'No'] },
+          { key: 'doseTaken', label: 'Dose taken (mg)', type: 'number', min: 0, max: 20, showIf: { field: 'takenToday', value: 'Yes' } },
+          { key: 'asPerscribed', label: 'As prescribed', type: 'single-select', options: ['Yes', 'No'], showIf: { field: 'takenToday', value: 'Yes' } },
+          { key: 'notes', label: 'Notes', type: 'textarea' }
+        ],
+        mockGenerator: (day) => ({ takenToday: 'Yes', doseTaken: day < 7 ? 4 : day < 14 ? 3 : 2, asPerscribed: 'Yes', notes: noteFor(day) }),
       },
       { id: 'anxiety-panic', name: 'Anxiety & Panic', chartType: 'bar', yAxisLabel: 'Level', insight: '2 weeks without a panic attack.',
         fields: [{ key: 'anxiety', label: 'Anxiety', type: 'slider', min: 1, max: 10, step: 1 }, { key: 'panicAttacks', label: 'Panic attacks', type: 'number', min: 0, max: 5 }, { key: 'trigger', label: 'Trigger', type: 'chips', options: ['Morning', 'Dose time', 'Crowded place', 'Alone', 'Other'] }, { key: 'notes', label: 'Notes', type: 'textarea' }],
@@ -815,11 +850,12 @@ export const substances: SubstanceConfig[] = [
     trackers: [
       { id: 'dose-log', name: 'Dose Log', chartType: 'bar', yAxisLabel: 'Grams', insight: '14 days without kratom. Opioid receptors recalibrating.',
         fields: [
-          { key: 'grams', label: 'Grams consumed', type: 'number', min: 0, max: 50 },
-          { key: 'doses', label: 'Number of doses', type: 'number', min: 0, max: 10, showIf: { field: 'grams', value: 0, op: '!==' } },
+          { key: 'usedToday', label: 'Used Kratom today?', type: 'single-select', options: ['Yes', 'No'] },
+          { key: 'grams', label: 'Grams consumed', type: 'number', min: 0, max: 50, showIf: { field: 'usedToday', value: 'Yes' } },
+          { key: 'doses', label: 'Number of doses', type: 'number', min: 0, max: 10, showIf: { field: 'usedToday', value: 'Yes' } },
           { key: 'notes', label: 'Notes', type: 'textarea' }
         ],
-        mockGenerator: (day) => ({ grams: day < 7 ? rn(Math.max(0, 15 - day * 2.5), Math.max(0, 18 - day * 2)) : 0, doses: day < 7 ? ri(1, Math.max(1, 4 - Math.floor(day * 0.5))) : 0, notes: noteFor(day) }),
+        mockGenerator: (day) => ({ usedToday: day < 7 ? 'Yes' : 'No', grams: day < 7 ? rn(Math.max(0, 15 - day * 2.5), Math.max(0, 18 - day * 2)) : 0, doses: day < 7 ? ri(1, Math.max(1, 4 - Math.floor(day * 0.5))) : 0, notes: noteFor(day) }),
       },
       { id: 'withdrawal', name: 'Withdrawal Symptoms', chartType: 'stacked-bar', yAxisLabel: 'Burden', insight: 'Physical symptoms tracking typical opioid withdrawal timeline.',
         fields: [{ key: 'muscleAches', label: 'Muscle aches', type: 'chips', options: ['None', 'Mild', 'Moderate', 'Severe'] }, { key: 'insomnia', label: 'Insomnia', type: 'chips', options: ['None', 'Mild', 'Moderate', 'Severe'] }, { key: 'anxiety', label: 'Anxiety', type: 'slider', min: 1, max: 10, step: 1 }, { key: 'restlessness', label: 'Restlessness', type: 'chips', options: ['None', 'Mild', 'Moderate', 'Severe'] }, { key: 'notes', label: 'Notes', type: 'textarea' }],
@@ -830,7 +866,12 @@ export const substances: SubstanceConfig[] = [
         mockGenerator: (day) => ({ mood: Math.min(10, rn(3 + day * 0.28, 4 + day * 0.25)), energy: Math.min(10, rn(2 + day * 0.3, 3 + day * 0.28)), motivation: Math.min(10, rn(2 + day * 0.32, 3 + day * 0.3)), notes: noteFor(day) }),
       },
       { id: 'cravings', name: 'Cravings', chartType: 'line', yAxisLabel: 'Intensity', insight: 'Cravings declining. Environmental triggers remain strongest.',
-        fields: [{ key: 'intensity', label: 'Intensity', type: 'slider', min: 0, max: 10, step: 1 }, { key: 'trigger', label: 'Trigger', type: 'chips', options: ['Habit time', 'Stress', 'Pain', 'Boredom', 'Online forums'] }, { key: 'resisted', label: 'Resisted', type: 'single-select', options: ['Yes', 'No'] }, { key: 'notes', label: 'Notes', type: 'textarea' }],
+        fields: [
+          { key: 'intensity', label: 'Intensity', type: 'slider', min: 0, max: 10, step: 1 },
+          { key: 'trigger', label: 'Trigger', type: 'chips', options: ['Habit time', 'Stress', 'Pain', 'Boredom', 'Online forums'], showIf: { field: 'intensity', value: 0, op: '!==' } },
+          { key: 'resisted', label: 'Resisted', type: 'single-select', options: ['Yes', 'No'], showIf: { field: 'intensity', value: 0, op: '!==' } },
+          { key: 'notes', label: 'Notes', type: 'textarea' }
+        ],
         mockGenerator: (day) => ({ intensity: Math.max(0, rn(8 - day * 0.35, 9 - day * 0.3)), trigger: pick(['Habit time', 'Stress', 'Online forums']), resisted: day > 5 ? 'Yes' : pick(['Yes', 'No']), notes: noteFor(day) }),
       },
       { id: 'sleep', name: 'Sleep Quality', chartType: 'area', yAxisLabel: 'Hours', insight: 'Sleep normalizing after acute withdrawal.',
@@ -920,7 +961,7 @@ export const substances: SubstanceConfig[] = [
           { key: 'setting', label: 'Setting', type: 'chips', options: ['Club/festival', 'House party', 'Alone', 'With partner'], showIf: { field: 'used', value: 'Yes' } },
           { key: 'notes', label: 'Notes', type: 'textarea' }
         ],
-        mockGenerator: (day) => ({ used: day === 0 || day === 14 ? 'Yes' : 'No', amount: day === 0 ? 150 : day === 14 ? 120 : 0, setting: day === 0 ? 'Club/festival' : '', notes: noteFor(day) }),
+        mockGenerator: (day) => ({ used: day === 0 || day === 14 ? 'Yes' : 'No', amount: day === 0 ? 150 : day === 14 ? 120 : 0, setting: (day === 0 || day === 14) ? 'Club/festival' : '', notes: noteFor(day) }),
       },
       { id: 'mood', name: 'Mood & Emotional Recovery', chartType: 'line', yAxisLabel: 'Score', insight: 'Emotional blunting decreased 40%. Authentic emotion returning.',
         fields: [{ key: 'mood', label: 'Overall mood', type: 'slider', min: 1, max: 10, step: 1 }, { key: 'blunting', label: 'Emotional blunting', type: 'slider', min: 1, max: 10, step: 1 }, { key: 'empathy', label: 'Social warmth', type: 'slider', min: 1, max: 10, step: 1 }, { key: 'depression', label: 'Depression', type: 'slider', min: 1, max: 10, step: 1 }, { key: 'notes', label: 'Notes', type: 'textarea' }],
@@ -935,8 +976,23 @@ export const substances: SubstanceConfig[] = [
         mockGenerator: (day) => ({ hours: Math.min(9, rn(5 + day * 0.15, 6 + day * 0.12)), quality: Math.min(10, rn(3 + day * 0.28, 4 + day * 0.25)), vividDreams: day < 10 ? 'Yes' : 'No', notes: noteFor(day) }),
       },
       { id: 'social', name: 'Social Patterns', chartType: 'bar', yAxisLabel: 'Risk situations', insight: 'Music festivals and club settings remain highest-risk.',
-        fields: [{ key: 'situations', label: 'MDMA exposure situations', type: 'chips', options: ['Festival', 'Club', 'House party', 'Friend group', 'None'], multiSelect: true }, { key: 'cravings', label: 'Cravings', type: 'slider', min: 1, max: 10, step: 1 }, { key: 'trigger', label: 'Primary trigger', type: 'chips', options: ['Social setting', 'Music', 'Memory', 'Depression', 'FOMO'] }, { key: 'outcome', label: 'Outcome', type: 'single-select', options: ['Resisted', 'Gave in'] }, { key: 'notes', label: 'Notes', type: 'textarea' }],
-        mockGenerator: (day) => ({ situations: day % 7 === 0 ? ['Club'] : ['None'], cravings: Math.max(1, rn(6 - day * 0.22, 7 - day * 0.2)), trigger: pick(['Social setting', 'Music', 'FOMO']), outcome: 'Resisted', count: day % 7 === 0 ? 1 : 0, notes: noteFor(day) }),
+        fields: [
+          { key: 'facedRisk', label: 'Were you in any high-risk situations today?', type: 'single-select', options: ['Yes', 'No'] },
+          { key: 'situations', label: 'MDMA exposure situations', type: 'chips', options: ['Festival', 'Club', 'House party', 'Friend group'], multiSelect: true, showIf: { field: 'facedRisk', value: 'Yes' } },
+          { key: 'cravings', label: 'Cravings', type: 'slider', min: 1, max: 10, step: 1, showIf: { field: 'facedRisk', value: 'Yes' } },
+          { key: 'trigger', label: 'Primary trigger', type: 'chips', options: ['Social setting', 'Music', 'Memory', 'Depression', 'FOMO'], showIf: { field: 'facedRisk', value: 'Yes' } },
+          { key: 'outcome', label: 'Outcome', type: 'single-select', options: ['Resisted', 'Gave in'], showIf: { field: 'facedRisk', value: 'Yes' } },
+          { key: 'notes', label: 'Notes', type: 'textarea' }
+        ],
+        mockGenerator: (day) => ({
+          facedRisk: day % 7 === 0 ? 'Yes' : 'No',
+          situations: day % 7 === 0 ? ['Club'] : [],
+          cravings: day % 7 === 0 ? Math.max(1, rn(6 - day * 0.22, 7 - day * 0.2)) : 0,
+          trigger: day % 7 === 0 ? pick(['Social setting', 'Music', 'FOMO']) : '',
+          outcome: 'Resisted',
+          count: day % 7 === 0 ? 1 : 0,
+          notes: noteFor(day)
+        }),
       },
       { id: 'physical', name: 'Physical Health', chartType: 'line', yAxisLabel: 'Score', insight: 'Physical health improving. Heat regulation normalizing.',
         fields: [{ key: 'energy', label: 'Energy', type: 'slider', min: 1, max: 10, step: 1 }, { key: 'appetite', label: 'Appetite', type: 'single-select', options: ['None', 'Low', 'Normal', 'High'] }, { key: 'jawTension', label: 'Jaw tension', type: 'chips', options: ['None', 'Mild', 'Moderate', 'Severe'] }, { key: 'temperature', label: 'Temperature regulation', type: 'single-select', options: ['Normal', 'Slightly off', 'Hot flashes', 'Chills'] }, { key: 'notes', label: 'Notes', type: 'textarea' }],
