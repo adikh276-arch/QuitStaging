@@ -147,4 +147,29 @@
     from { opacity: 0; transform: scaleY(0); }
     to { opacity: 1; transform: scaleY(1); }
   }
+
+  /* Custom Slider Styles */
+  input[type=range] {
+    @apply appearance-none bg-transparent;
+  }
+  
+  input[type=range]::-webkit-slider-runnable-track {
+    @apply h-1.5 w-full rounded-full bg-muted transition-colors cursor-pointer;
+  }
+  
+  input[type=range]::-moz-range-track {
+    @apply h-1.5 w-full rounded-full bg-muted transition-colors cursor-pointer;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    @apply appearance-none h-5 w-5 rounded-full bg-white border-[3px] shadow-sm -mt-[7px] transition-all active:scale-110 cursor-grab active:cursor-grabbing;
+    border-color: var(--slider-accent, hsl(var(--primary)));
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+
+  input[type=range]::-moz-range-thumb {
+    @apply h-5 w-5 rounded-full bg-white border-[3px] shadow-sm transition-all active:scale-110 cursor-grab active:cursor-grabbing;
+    border-color: var(--slider-accent, hsl(var(--primary)));
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
 }

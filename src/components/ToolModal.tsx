@@ -7,6 +7,11 @@ import { getAssessment, saveAssessment, toggleCommunityUpvote, getCommunityUpvot
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
+const sparkColors: Record<string, string> = {
+  alcohol: '#ef4444', tobacco: '#d97706', opioids: '#8b5cf6', cannabis: '#10b981',
+  stimulants: '#eab308', benzodiazepines: '#3b82f6', kratom: '#14b8a6', mdma: '#ec4899',
+};
+
 interface Props {
   toolId: string;
   substance: SubstanceConfig;
@@ -154,7 +159,7 @@ const CalculatorView = ({ substance }: { substance: SubstanceConfig }) => {
         {calc.inputs.map(input => (
           <div key={input.key}>
             <div className="flex justify-between text-xs"><span className="text-foreground font-medium">{t(`quit.substances.${substance.slug}.calculator.inputs.${input.key}.label`)}</span><span className="text-primary font-bold">{inputs[input.key]}{input.unit || ''}</span></div>
-            <input type="range" min={input.min} max={input.max} step={input.step} value={inputs[input.key]} onChange={e => setInputs(prev => ({ ...prev, [input.key]: Number(e.target.value) }))} className="mt-1 w-full accent-primary" />
+            <input type="range" min={input.min} max={input.max} step={input.step} value={inputs[input.key]} onChange={e => setInputs(prev => ({ ...prev, [input.key]: Number(e.target.value) }))} className="w-full h-6 bg-transparent" style={{ '--slider-accent': sparkColors[substance.slug] || '#10b981' } as any} />
           </div>
         ))}
       </div>
@@ -552,7 +557,7 @@ const ActivityRunner = ({ activity, substance, onBack }: { activity: any; substa
               ) : field.type === 'slider' ? (
                 <div>
                   <div className="flex justify-between text-xs mb-1"><span className="text-muted-foreground">{field.min}</span><span className="text-primary font-bold">{journalValues[field.key] ?? field.min}</span><span className="text-muted-foreground">{field.max}</span></div>
-                  <input type="range" min={field.min} max={field.max} step={field.step || 1} value={journalValues[field.key] ?? field.min} onChange={e => setJournalValues(prev => ({ ...prev, [field.key]: Number(e.target.value) }))} className="w-full accent-primary" />
+                  <input type="range" min={field.min} max={field.max} step={field.step || 1} value={journalValues[field.key] ?? field.min} onChange={e => setJournalValues(prev => ({ ...prev, [field.key]: Number(e.target.value) }))} className="w-full h-6 bg-transparent" style={{ '--slider-accent': sparkColors[substance.slug] || '#10b981' } as any} />
                 </div>
               ) : field.type === 'chips' ? (
                 <div className="flex flex-wrap gap-2">

@@ -114,7 +114,7 @@ const TrackerDetail = ({ tracker, substance, onClose }: Props) => {
                   <label className="mb-2.5 block text-xs font-bold text-foreground uppercase tracking-wider">{t(`quit.substances.${substance.slug}.trackers.${tracker.id}.fields.${field.key}.label`)}</label>
                   {field.type === 'slider' && (
                     <div className="space-y-2">
-                      <input type="range" min={field.min || 0} max={field.max || 10} step={field.step || 1} value={values[field.key] ?? field.min ?? 0} onChange={e => updateField(field.key, Number(e.target.value))} className="w-full h-2 rounded-full appearance-none cursor-pointer" style={{ accentColor }} />
+                      <input type="range" min={field.min || 0} max={field.max || 10} step={field.step || 1} value={values[field.key] ?? field.min ?? 0} onChange={e => updateField(field.key, Number(e.target.value))} className="w-full h-6 bg-transparent" style={{ '--slider-accent': accentColor } as any} />
                       <div className="flex justify-between text-[10px] text-muted-foreground font-medium">
                         <span>{field.min || 0}</span>
                         <span className="text-lg font-bold text-foreground -mt-1">{values[field.key] ?? field.min ?? 0}</span>
