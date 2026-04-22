@@ -6,7 +6,7 @@
 
 @layer base {
   .theme-quit {
-    --background: 40 33% 97%;
+    --background: 216 33% 97%;
     --foreground: 220 20% 14%;
 
     --card: 40 30% 99%;
@@ -15,7 +15,7 @@
     --popover: 40 30% 99%;
     --popover-foreground: 220 20% 14%;
 
-    --primary: 162 36% 35%;
+    --primary: 202 71% 52%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 40 25% 93%;
@@ -32,18 +32,18 @@
 
     --border: 40 20% 88%;
     --input: 40 20% 88%;
-    --ring: 162 36% 35%;
+    --ring: 202 71% 52%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 40 30% 96%;
+    --sidebar-background: 216 30% 96%;
     --sidebar-foreground: 220 10% 30%;
-    --sidebar-primary: 162 36% 35%;
+    --sidebar-primary: 202 71% 52%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 40 25% 93%;
     --sidebar-accent-foreground: 220 20% 14%;
     --sidebar-border: 40 20% 88%;
-    --sidebar-ring: 162 36% 35%;
+    --sidebar-ring: 202 71% 52%;
 
     /* Substance accent colors */
     --substance-alcohol: 0 65% 50%;

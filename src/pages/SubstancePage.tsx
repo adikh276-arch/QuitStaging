@@ -192,7 +192,16 @@ const SubstancePage = () => {
 
       <div className="mx-auto max-w-lg px-5 pb-12">
         {/* Back button */}
-        <button onClick={() => window.location.href = 'https://web.mantracare.com/quit'} className="flex items-center gap-1.5 py-5 text-sm text-muted-foreground hover:text-foreground transition-colors font-medium">
+        <button 
+          onClick={() => {
+            if (window.parent !== window) {
+              window.parent.postMessage({ action: 'exit' }, 'https://web.mantracare.com');
+            } else {
+              window.location.href = 'https://web.mantracare.com';
+            }
+          }} 
+          className="flex items-center gap-1.5 py-5 text-sm text-muted-foreground hover:text-foreground transition-colors font-medium"
+        >
           <ArrowLeft className="h-4 w-4" /> {t('quit.app.back')}
         </button>
 
