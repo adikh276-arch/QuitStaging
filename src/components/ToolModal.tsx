@@ -6,6 +6,8 @@ import { SubstanceConfig } from '@/data/types';
 import { getAssessment, saveAssessment, toggleCommunityUpvote, getCommunityUpvotes, addUserPost, getUserPosts } from '@/data/storage';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { analytics } from '@/lib/analytics';
+import { getUserId } from '@/data/storage';
 
 const sparkColors: Record<string, string> = {
   alcohol: '#ef4444', tobacco: '#d97706', opioids: '#8b5cf6', cannabis: '#10b981',
@@ -50,9 +52,6 @@ const dsmQuestions = [
   'Have you experienced tolerance — needing more [S]?',
   'Have you experienced withdrawal symptoms when stopping [S]?',
 ];
-
-import { analytics } from '@/lib/analytics';
-import { getUserId } from '@/data/storage';
 
 const binaryOptions = [
   { label: 'Yes', value: 1, key: 'opt_yes' },
