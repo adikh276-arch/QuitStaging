@@ -51,12 +51,12 @@ const dsmQuestions = [
   'Have you experienced withdrawal symptoms when stopping [S]?',
 ];
 
-const likertOptions = [
-  { label: 'Definitely Yes', value: 4 },
-  { label: 'Somewhat Yes', value: 3 },
-  { label: 'Not Sure', value: 2 },
-  { label: 'Probably Not', value: 1 },
-  { label: 'Not at All', value: 0 },
+import { analytics } from '@/lib/analytics';
+import { getUserId } from '@/data/storage';
+
+const binaryOptions = [
+  { label: 'Yes', value: 1, key: 'opt_yes' },
+  { label: 'No', value: 0, key: 'opt_no' },
 ];
 
 const Assessment = ({ substance }: { substance: SubstanceConfig }) => {
@@ -74,70 +74,125 @@ const Assessment = ({ substance }: { substance: SubstanceConfig }) => {
     setSelected(null);
     if (step < 10) setStep(step + 1);
     else {
-      const score = Math.round(newAnswers.reduce((a, b) => a + b, 0) / (11 * 4) * 11);
+      const score = newAnswers.reduce((a, b) => a + b, 0);
       saveAssessment(substance.slug, { score, date: new Date().toISOString(), answers: newAnswers });
+      
+      // Track completion
+      const severityLabel = score <= 1 ? null : score <= 3 ? 'Mild' : score <= 5 ? 'Moderate' : 'Severe';
+      if (severityLabel) {
+        analytics.trackAssessmentCompleted(substance.slug, {
+          user_id: getUserId(),
+          score,
+          max_score: 11,
+          severity_label: severityLabel as 'Mild' | 'Moderate' | 'Severe'
+        });
+      }
+      
       setDone(true);
     }
   };
 
   if (done) {
-    const rawTotal = answers.reduce((a, b) => a + b, 0);
-    const maxTotal = 11 * 4;
-    const normalizedScore = Math.round((rawTotal / maxTotal) * 11);
+    const score = answers.reduce((a, b) => a + b, 0);
     
-    const { label: severity, color } = normalizedScore <= 1 
-      ? { label: t('quit.app.severity_none'), color: 'text-primary' }
-      : normalizedScore <= 3 
-        ? { label: t('quit.app.severity_mild'), color: 'text-accent' }
-        : normalizedScore <= 5 
-          ? { label: t('quit.app.severity_moderate'), color: 'text-accent' }
-          : { label: t('quit.app.severity_severe'), color: 'text-destructive' };
+    const { label: severity, color, desc } = score <= 1 
+      ? { label: t('quit.app.severity_none'), color: 'text-primary', desc: t('quit.app.dsm.none_desc', 'No significant indicators of Substance Use Disorder.') }
+      : score <= 3 
+        ? { label: t('quit.app.severity_mild'), color: 'text-accent', desc: t('quit.app.dsm.mild_desc', 'Shows signs of mild dependency. Early intervention is highly effective.') }
+        : score <= 5 
+          ? { label: t('quit.app.severity_moderate'), color: 'text-orange-500', desc: t('quit.app.dsm.moderate_desc', 'Moderate dependency detected. Professional support is recommended.') }
+          : { label: t('quit.app.severity_severe'), color: 'text-destructive', desc: t('quit.app.dsm.severe_desc', 'Severe dependency detected. Please consult a specialist immediately.') };
 
     return (
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center">
-        <h2 className="font-display text-2xl text-foreground">{t('quit.app.results')}</h2>
-        <p className={`mt-4 font-display text-4xl font-bold ${color}`}>{normalizedScore}/11</p>
-        <p className={`mt-2 text-lg font-semibold ${color}`}>{severity} {t('quit.app.substance_use_disorder')}</p>
-        {prev && <p className="mt-3 text-xs text-muted-foreground">{t('quit.app.previous')}: {prev.score}/11</p>}
-        <div className="mt-4 h-3 rounded-full bg-muted">
-          <div className={`h-3 rounded-full ${normalizedScore <= 1 ? 'bg-primary' : normalizedScore <= 3 ? 'bg-accent' : normalizedScore <= 5 ? 'bg-accent' : 'bg-destructive'}`} style={{ width: `${(normalizedScore / 11) * 100}%` }} />
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-4">
+        <div className="flex justify-center mb-4">
+          <div className={`rounded-2xl p-4 ${color.replace('text-', 'bg-')}/10 border border-current ${color}`}>
+            <ClipboardList className="h-10 w-10" />
+          </div>
         </div>
-        <button onClick={() => { setStep(0); setAnswers([]); setSelected(null); setDone(false); }} className="mt-6 rounded-xl bg-muted px-6 py-2 text-sm font-medium">{t('quit.app.retake')}</button>
+        <h2 className="font-display text-2xl text-foreground">{t('quit.app.results')}</h2>
+        <div className="mt-4 relative">
+          <p className={`text-6xl font-bold ${color}`}>{score}<span className="text-2xl text-muted-foreground/50">/11</span></p>
+        </div>
+        <p className={`mt-3 text-xl font-bold ${color}`}>{severity} {t('quit.app.substance_use_disorder')}</p>
+        <p className="mt-4 text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
+          {desc}
+        </p>
+        
+        {prev && (
+          <div className="mt-6 flex flex-col items-center gap-1 border-t border-border pt-4">
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">{t('quit.app.previous')}</span>
+            <span className="text-sm font-medium text-foreground">{prev.score}/11 {t('quit.app.indicators')}</span>
+          </div>
+        )}
+
+        <div className="mt-8 flex flex-col gap-3">
+          <button onClick={() => { setStep(0); setAnswers([]); setSelected(null); setDone(false); }} className="w-full rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20">
+            {t('quit.app.retake')}
+          </button>
+          <p className="text-[10px] text-muted-foreground px-4 italic leading-tight">
+            {t('quit.app.dsm.disclaimer', 'This assessment is for informational purposes and does not replace a clinical diagnosis by a healthcare professional.')}
+          </p>
+        </div>
       </motion.div>
     );
   }
 
   return (
-    <div>
-      <div className="mb-4 h-2 rounded-full bg-muted"><div className="h-2 rounded-full bg-primary transition-all" style={{ width: `${((step + 1) / 11) * 100}%` }} /></div>
-      <p className="mb-2 text-xs text-muted-foreground">{t('quit.app.question_x_of_y', { current: step + 1, total: 11 })}</p>
-      <motion.p key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="mb-5 text-base font-medium text-foreground">
+    <div className="py-2">
+      <div className="mb-6 h-2 w-full rounded-full bg-muted overflow-hidden">
+        <motion.div 
+          initial={{ width: 0 }}
+          animate={{ width: `${((step + 1) / 11) * 100}%` }}
+          className="h-full bg-primary" 
+        />
+      </div>
+      
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-primary">{t('quit.app.dsm.criteria')} {step + 1}</span>
+        <span className="text-[10px] font-medium text-muted-foreground">{step + 1} / 11</span>
+      </div>
+
+      <motion.p key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="mb-8 text-lg font-semibold text-foreground leading-snug">
         {t(`quit.app.dsm.q${step}`, { substance: t(`quit.substances.${substance.slug}.name`) })}
       </motion.p>
-      <div className="flex flex-col gap-2">
-        {likertOptions.map((opt) => (
+
+      <div className="flex flex-col gap-3">
+        {binaryOptions.map((opt) => (
           <motion.button
-            key={opt.value}
-            whileTap={{ scale: 0.97 }}
+            key={opt.key}
+            whileTap={{ scale: 0.98 }}
             onClick={() => setSelected(opt.value)}
-            className={`w-full rounded-xl border px-4 py-3 text-left text-sm font-medium transition-all ${
+            className={`w-full rounded-xl border-2 px-5 py-4 text-left text-base font-semibold transition-all ${
               selected === opt.value
-                ? 'border-primary bg-primary/15 text-primary ring-1 ring-primary/30'
-                : 'border-border bg-muted/50 text-foreground hover:bg-muted'
+                ? 'border-primary bg-primary/10 text-primary ring-2 ring-primary/20'
+                : 'border-border bg-card text-foreground hover:border-primary/30 hover:bg-muted/50'
             }`}
           >
-            {t(`quit.app.dsm.opt${opt.value}`)}
+            <div className="flex items-center justify-between">
+              {t(`quit.app.dsm.${opt.key}`)}
+              {selected === opt.value && <Check className="h-5 w-5" />}
+            </div>
           </motion.button>
         ))}
       </div>
-      <div className="mt-4 flex items-center justify-between">
-        {step > 0 ? <button onClick={() => { setStep(step - 1); setAnswers(answers.slice(0, -1)); setSelected(answers[answers.length - 1] ?? null); }} className="text-xs text-muted-foreground">← {t('quit.app.back')}</button> : <span />}
+
+      <div className="mt-10 flex items-center justify-between border-t border-border pt-6">
+        {step > 0 ? (
+          <button 
+            onClick={() => { setStep(step - 1); setAnswers(answers.slice(0, -1)); setSelected(answers[answers.length - 1] ?? null); }} 
+            className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ChevronRight className="h-4 w-4 rotate-180" /> {t('quit.app.back')}
+          </button>
+        ) : <span />}
+        
         <button
           onClick={confirmAnswer}
           disabled={selected === null}
-          className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity disabled:opacity-40"
+          className="rounded-xl bg-primary px-8 py-3 text-sm font-bold text-primary-foreground transition-all shadow-lg shadow-primary/20 disabled:opacity-40 disabled:shadow-none"
         >
-          {step < 10 ? (t('quit.app.next', 'Next')) : (t('quit.app.see_results', 'See Results'))}
+          {step < 10 ? t('quit.app.next') : t('quit.app.see_results')}
         </button>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { TrackerEntry, AssessmentResult, SubstanceSlug } from './types';
 import { executeQuery } from '@/lib/db';
 
-const getUserId = () => localStorage.getItem('therapy_user_id') || 'anon';
+export const getUserId = () => localStorage.getItem('therapy_user_id') || 'anon';
 export const getPrefix = () => `quitmantra_${getUserId()}`;
 
 /**
