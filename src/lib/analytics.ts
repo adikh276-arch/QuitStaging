@@ -26,7 +26,9 @@ mixpanel.init(TOKEN, {
   track_pageview: false,   // we track page views manually for richer context
   persistence: 'localStorage',
   autocapture: false,      // disabled — we fire precise semantic events only
-  record_sessions_percent: 100,
+  record_sessions_percent: 0,
+  api_host: "https://api-js.mixpanel.com",
+  api_transport: 'XHR',
 });
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
