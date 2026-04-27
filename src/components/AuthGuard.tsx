@@ -153,10 +153,10 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
       // The redirect_url we give the auth portal is the platform ROOT (/quit),
       // because the auth portal appends ?token=... and redirects there.
       // We'll read the saved path from localStorage on return.
-      const returnUrl = `https://platform.mantracare.com/quit`;
+      const returnUrl = `https://platform.mantracare.com/quit_staging`;
 
       console.log("[Auth] No session — redirecting to auth portal.");
-      window.location.href = `https://web-staging.mantracare.com/app/quit?redirect_url=${encodeURIComponent(returnUrl)}`;
+      window.location.href = `https://web-staging.mantracare.com/app/quit_staging?redirect_url=${encodeURIComponent(returnUrl)}`;
     };
 
     checkAuth();
@@ -193,7 +193,7 @@ function restoreAndNavigate(navigate: ReturnType<typeof useNavigate>, currentPat
   // navigate() replaces the current URL including query string, thereby stripping the tokens safely.
   // Only navigate if the target is actually different to avoid double-mounts
   const currentFull = window.location.pathname + window.location.search;
-  const basename = "/quit";
+  const basename = "/quit_staging";
   const absoluteTarget = basename + (targetPath.startsWith('/') ? targetPath : '/' + targetPath);
   
   if (currentFull !== absoluteTarget) {

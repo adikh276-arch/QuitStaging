@@ -24,7 +24,7 @@ const App = () => {
         <Toaster />
         <Sonner />
         <div className="theme-quit min-h-screen bg-background text-foreground">
-          <BrowserRouter basename="/quit">
+          <BrowserRouter basename="/quit_staging">
             <AuthGuard>
 
               <Routes>
