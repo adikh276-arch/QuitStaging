@@ -217,9 +217,9 @@ const SubstancePage = () => {
         <button 
           onClick={() => {
             if (window.parent !== window) {
-              window.parent.postMessage({ action: 'exit' }, 'https://web.mantracare.com');
+              window.parent.postMessage({ action: 'exit' }, 'https://web-staging.mantracare.com');
             } else {
-              window.location.href = 'https://web.mantracare.com';
+              window.location.href = 'https://web-staging.mantracare.com';
             }
           }} 
           className="flex items-center gap-1.5 py-5 text-sm text-muted-foreground hover:text-foreground transition-colors font-medium"

@@ -23,7 +23,7 @@ FROM nginx:alpine
 
 WORKDIR /usr/share/nginx/html
 
-COPY --from=builder /app/dist /usr/share/nginx/html/quit
+COPY --from=builder /app/dist /usr/share/nginx/html/quit_staging
 
 RUN rm /etc/nginx/conf.d/default.conf
 COPY vite-nginx.conf /etc/nginx/conf.d/nginx.conf

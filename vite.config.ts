@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   
   return {
-    base: "/quit/",
+    base: "/quit_staging/",
     server: {
       host: "::",
       port: 8080,

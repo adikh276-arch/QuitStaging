@@ -235,9 +235,9 @@ const SubstanceOnboarding = ({ substance, onComplete }: Props) => {
                 setStep(s => s - 1);
               } else {
                 if (window.parent !== window) {
-                  window.parent.postMessage({ action: 'exit' }, 'https://web.mantracare.com');
+                  window.parent.postMessage({ action: 'exit' }, 'https://web-staging.mantracare.com');
                 } else {
-                  window.location.href = 'https://web.mantracare.com';
+                  window.location.href = 'https://web-staging.mantracare.com';
                 }
               }
             }}

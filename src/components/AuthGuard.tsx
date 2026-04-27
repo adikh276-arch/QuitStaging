@@ -100,7 +100,7 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
         if (token) {
           try {
             console.log("[Auth] Exchanging token for user_id...");
-            const resp = await fetch("https://api.mantracare.com/user/user-info", {
+            const resp = await fetch("https://staging.mantracare.com/user/user-info", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ token }),
@@ -156,7 +156,7 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
       const returnUrl = `https://platform.mantracare.com/quit`;
 
       console.log("[Auth] No session — redirecting to auth portal.");
-      window.location.href = `https://web.mantracare.com/app/quit?redirect_url=${encodeURIComponent(returnUrl)}`;
+      window.location.href = `https://web-staging.mantracare.com/app/quit?redirect_url=${encodeURIComponent(returnUrl)}`;
     };
 
     checkAuth();
