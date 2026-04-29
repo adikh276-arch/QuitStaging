@@ -64,7 +64,7 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   // -----------------------------------------------------------------------
   useEffect(() => {
     const checkAuth = async () => {
-      console.log('[AuthGuard] useEffect running');
+      console.log('[AuthGuard] checkAuth function starting...');
       if (isAuthenticating.current) {
         console.log('[AuthGuard] Already authenticating, skipping...');
         return;
@@ -73,10 +73,13 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 
       // 1. Already authenticated — just render
       const savedUserId = localStorage.getItem(STORAGE_KEY);
+      console.log('[AuthGuard] Saved userId in localStorage:', savedUserId);
       if (isRealUserId(savedUserId)) {
+        console.log('[AuthGuard] Valid user session found, identifying and tracking...');
         analytics.identifyUser(savedUserId!);
         analytics.trackSessionStarted({ is_returning_user: true, language: navigator.language });
         setIsReady(true);
+        console.log('[AuthGuard] Set isReady to true (session found)');
         return;
       }
 
@@ -84,6 +87,7 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get("token");
       const urlUserId = urlParams.get("userId") || urlParams.get("user_id");
+      console.log('[AuthGuard] URL Params - token:', token ? 'exists' : 'missing', 'userId:', urlUserId);
 
       if (token || urlUserId) {
         // 3a. Auth portal sent a real userId directly — use it immediately
@@ -158,7 +162,7 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
       // We'll read the saved path from localStorage on return.
       const returnUrl = `https://platform.mantracare.com/quit_staging/`;
 
-      console.log("[Auth] No session — redirecting to auth portal.");
+      console.log("[Auth] No session found and no URL credentials — redirecting to auth portal via returnUrl:", returnUrl);
       window.location.href = `https://web-staging.mantracare.com/app/quit_staging?redirect_url=${encodeURIComponent(returnUrl)}`;
     };
 
