@@ -18,7 +18,7 @@ const substanceColors: Record<string, { gradient: string; bg: string; ring: stri
   mdma:            { gradient: 'from-pink-500 to-fuchsia-600',   bg: 'bg-pink-50 dark:bg-pink-950/40',    ring: 'ring-pink-200 dark:ring-pink-800/40',    orb: 'bg-pink-300/20' },
 };
 
-const PLATFORM_HOST = "web-staging.mantracare.com";
+const PLATFORM_HOST = "platform.mantracare.com";
 
 const SubstanceCard = ({ substance, index }: { substance: typeof substances[0]; index: number }) => {
   const navigate = useNavigate();
