@@ -9,8 +9,11 @@ const REDIRECT_PATH_KEY = "quit_redirect_path"; // localStorage key — survives
 
 // Returns user id only if it looks like a real numeric ID (4-8 digits), not a UUID
 const isRealUserId = (id: string | null): boolean => {
-  if (!id) return false;
-  return /^\d{4,8}$/.test(id.trim());
+  if (!id || id === "anon") return false;
+  const trimmed = id.trim();
+  // Allow numeric IDs (4-8 digits) OR UUIDs (standard 36-char format)
+  return /^\d{4,8}$/.test(trimmed) || 
+         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(trimmed);
 };
 
 export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
@@ -153,7 +156,7 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
       // The redirect_url we give the auth portal is the platform ROOT (/quit),
       // because the auth portal appends ?token=... and redirects there.
       // We'll read the saved path from localStorage on return.
-      const returnUrl = `https://platform.mantracare.com/quit_staging`;
+      const returnUrl = `https://platform.mantracare.com/quit_staging/`;
 
       console.log("[Auth] No session — redirecting to auth portal.");
       window.location.href = `https://web-staging.mantracare.com/app/quit_staging?redirect_url=${encodeURIComponent(returnUrl)}`;
