@@ -52,14 +52,14 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   // Flow:
   //   A) User visits /quit/alcohol (unauthenticated)
   //      → save "/alcohol" to localStorage
-  //      → redirect to auth portal with redirect_url = platform.mantracare.com/quit
+  //      → redirect to auth portal with redirect_url = web-staging.mantracare.com/quit
   //
-  //   B) Auth portal authenticates, redirects to platform.mantracare.com/quit?token=...
+  //   B) Auth portal authenticates, redirects to web-staging.mantracare.com/quit?token=...
   //      → we see the token, exchange it for user_id
   //      → read saved path "/alcohol" from localStorage
   //      → navigate to "/alcohol"
   //
-  //   KEY: localStorage persists across the domain redirect (same platform.mantracare.com domain).
+  //   KEY: localStorage persists across the domain redirect (same web-staging.mantracare.com domain).
   //        sessionStorage does NOT survive navigation away from the page.
   // -----------------------------------------------------------------------
   useEffect(() => {
@@ -160,7 +160,7 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
       // The redirect_url we give the auth portal is the platform ROOT (/quit),
       // because the auth portal appends ?token=... and redirects there.
       // We'll read the saved path from localStorage on return.
-      const returnUrl = `https://platform.mantracare.com/quit_staging/`;
+      const returnUrl = `https://web-staging.mantracare.com/quit_staging/`;
 
       console.log("[Auth] No session found and no URL credentials — redirecting to auth portal via returnUrl:", returnUrl);
       window.location.href = `https://web-staging.mantracare.com/app/quit_staging?redirect_url=${encodeURIComponent(returnUrl)}`;
